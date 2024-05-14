@@ -38,7 +38,7 @@ async function main(): Promise<void> {
 
   const octokit = github.getOctokit(botToken)
   const originTitle = title?.split(TRANSLATE_TITLE_DIVING)?.[0]
-  const originComment = body?.split(TRANSLATE_DIVIDING_LINE)?.[0]
+  const originComment = body?.split(TRANSLATE_DIVIDING_LINE)?.[0].trimEnd()
   const oldAppend = body?.split(TRANSLATE_DIVIDING_LINE)?.[1]
   const translateOrigin = translateText.stringify(originComment, originTitle)
   if (!translateOrigin) {
@@ -86,22 +86,12 @@ async function main(): Promise<void> {
       translateTitle &&
       originTitle !== translateTitle &&
       [originTitle, translateTitle].join(TRANSLATE_TITLE_DIVING)
-    // let body
-    // if(translateComment !=null && originComment !== translateComment){
-    //   body = `${originComment}
-    //           ${TRANSLATE_DIVIDING_LINE}
-    //           ${translateOrigin_MD5}
-    //           ---
-    //           ${translateComment}
-    //           `
-    // }else{
-    //   body = originComment
-    // }
     const body =
       translateComment &&
       originComment !== translateComment &&
-      `${originComment}${TRANSLATE_DIVIDING_LINE}
-      ${translateOrigin_MD5}
+      `${originComment}
+${TRANSLATE_DIVIDING_LINE}
+${translateOrigin_MD5}
 ---
 ${translateComment}
 `

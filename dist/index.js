@@ -76,7 +76,7 @@ function main() {
         }
         const octokit = github.getOctokit(botToken);
         const originTitle = (_b = title === null || title === void 0 ? void 0 : title.split(TRANSLATE_TITLE_DIVING)) === null || _b === void 0 ? void 0 : _b[0];
-        const originComment = (_c = body === null || body === void 0 ? void 0 : body.split(TRANSLATE_DIVIDING_LINE)) === null || _c === void 0 ? void 0 : _c[0];
+        const originComment = (_c = body === null || body === void 0 ? void 0 : body.split(TRANSLATE_DIVIDING_LINE)) === null || _c === void 0 ? void 0 : _c[0].trimEnd();
         const oldAppend = (_d = body === null || body === void 0 ? void 0 : body.split(TRANSLATE_DIVIDING_LINE)) === null || _d === void 0 ? void 0 : _d[1];
         const translateOrigin = translate_1.translateText.stringify(originComment, originTitle);
         if (!translateOrigin) {
@@ -112,21 +112,11 @@ function main() {
             const title = translateTitle &&
                 originTitle !== translateTitle &&
                 [originTitle, translateTitle].join(TRANSLATE_TITLE_DIVING);
-            // let body
-            // if(translateComment !=null && originComment !== translateComment){
-            //   body = `${originComment}
-            //           ${TRANSLATE_DIVIDING_LINE}
-            //           ${translateOrigin_MD5}
-            //           ---
-            //           ${translateComment}
-            //           `
-            // }else{
-            //   body = originComment
-            // }
             const body = translateComment &&
                 originComment !== translateComment &&
-                `${originComment}${TRANSLATE_DIVIDING_LINE}
-      ${translateOrigin_MD5}
+                `${originComment}
+${TRANSLATE_DIVIDING_LINE}
+${translateOrigin_MD5}
 ---
 ${translateComment}
 `;

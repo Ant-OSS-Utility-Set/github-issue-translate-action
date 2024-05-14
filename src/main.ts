@@ -14,7 +14,7 @@ const DEFAULT_BOT_MESSAGE = `Bot detected the issue body's language is not Engli
 const DEFAULT_BOT_TOKEN = process.env.GITHUB_TOKEN
 
 async function main(): Promise<void> {
-  core.info(JSON.stringify(github.context))
+  // core.info(JSON.stringify(github.context))
 
   const isModifyTitle = core.getInput('IS_MODIFY_TITLE')
   const shouldAppendContent = core.getInput('APPEND_TRANSLATION')
@@ -40,36 +40,35 @@ async function main(): Promise<void> {
   const originTitle = title?.split(TRANSLATE_TITLE_DIVING)?.[0]
   const originComment = body?.split(TRANSLATE_DIVIDING_LINE)?.[0].trimEnd()
   const oldAppend = body?.split(TRANSLATE_DIVIDING_LINE)?.[1]
+  core.info('评论，题目：' + originComment + ';' + originTitle)
   const translateOrigin = translateText.stringify(originComment, originTitle)
-  if (!translateOrigin) {
-    return
-  }
-  if (typeof oldAppend == 'undefined') {
-    return
-  }
-  //md5
-  const startIndex = oldAppend.indexOf(ORIGINAL_MD5_PREFIX)
-  const endIndex = oldAppend?.indexOf(
-    ORIGINAL_MD5_POSTFIX,
-    startIndex + ORIGINAL_MD5_PREFIX.length
-  )
-  const originalMd5 = oldAppend.slice(
-    startIndex + ORIGINAL_MD5_PREFIX.length,
-    endIndex
-  )
   let newMd5 = Md5.hashStr(translateOrigin)
   const translateOrigin_MD5 =
     ORIGINAL_MD5_PREFIX + newMd5 + ORIGINAL_MD5_POSTFIX
-  core.info('旧的原文md5:' + originalMd5)
-  core.info('新的原文md5:' + newMd5)
-  if (originalMd5 === newMd5) {
-    core.info('原文不变，不需要edit')
-    return
-  } else {
-    core.info('2个md5不一致，需要重新翻译提交！')
-  }
+  if (typeof oldAppend !== 'undefined') {
+    core.info('比较md5开始：')
+    //md5
+    const startIndex = oldAppend.indexOf(ORIGINAL_MD5_PREFIX)
+    const endIndex = oldAppend?.indexOf(
+      ORIGINAL_MD5_POSTFIX,
+      startIndex + ORIGINAL_MD5_PREFIX.length
+    )
+    const originalMd5 = oldAppend.slice(
+      startIndex + ORIGINAL_MD5_PREFIX.length,
+      endIndex
+    )
 
-  //md5 end
+    core.info('旧的原文md5:' + originalMd5)
+    core.info('新的原文md5:' + newMd5)
+    if (originalMd5 === newMd5) {
+      core.info('原文不变，不需要edit')
+      return
+    } else {
+      core.info('2个md5不一致，需要重新翻译提交！')
+    }
+
+    //md5 end
+  }
 
   // translate issue comment body to english
   const translateTmp = await translate(translateOrigin)

@@ -57,7 +57,7 @@ const DEFAULT_BOT_TOKEN = process.env.GITHUB_TOKEN;
 function main() {
     var _a, _b, _c, _d;
     return __awaiter(this, void 0, void 0, function* () {
-        core.info(JSON.stringify(github.context));
+        // core.info(JSON.stringify(github.context))
         const isModifyTitle = core.getInput('IS_MODIFY_TITLE');
         const shouldAppendContent = core.getInput('APPEND_TRANSLATION');
         const botNote = ((_a = core.getInput('CUSTOM_BOT_NOTE')) === null || _a === void 0 ? void 0 : _a.trim()) || DEFAULT_BOT_MESSAGE;
@@ -78,29 +78,27 @@ function main() {
         const originTitle = (_b = title === null || title === void 0 ? void 0 : title.split(TRANSLATE_TITLE_DIVING)) === null || _b === void 0 ? void 0 : _b[0];
         const originComment = (_c = body === null || body === void 0 ? void 0 : body.split(TRANSLATE_DIVIDING_LINE)) === null || _c === void 0 ? void 0 : _c[0].trimEnd();
         const oldAppend = (_d = body === null || body === void 0 ? void 0 : body.split(TRANSLATE_DIVIDING_LINE)) === null || _d === void 0 ? void 0 : _d[1];
+        core.info('评论，题目：' + originComment + ';' + originTitle);
         const translateOrigin = translate_1.translateText.stringify(originComment, originTitle);
-        if (!translateOrigin) {
-            return;
-        }
-        if (typeof oldAppend == 'undefined') {
-            return;
-        }
-        //md5
-        const startIndex = oldAppend.indexOf(ORIGINAL_MD5_PREFIX);
-        const endIndex = oldAppend === null || oldAppend === void 0 ? void 0 : oldAppend.indexOf(ORIGINAL_MD5_POSTFIX, startIndex + ORIGINAL_MD5_PREFIX.length);
-        const originalMd5 = oldAppend.slice(startIndex + ORIGINAL_MD5_PREFIX.length, endIndex);
         let newMd5 = ts_md5_1.Md5.hashStr(translateOrigin);
         const translateOrigin_MD5 = ORIGINAL_MD5_PREFIX + newMd5 + ORIGINAL_MD5_POSTFIX;
-        core.info('旧的原文md5:' + originalMd5);
-        core.info('新的原文md5:' + newMd5);
-        if (originalMd5 === newMd5) {
-            core.info('原文不变，不需要edit');
-            return;
+        if (typeof oldAppend !== 'undefined') {
+            core.info("比较md5开始：");
+            //md5
+            const startIndex = oldAppend.indexOf(ORIGINAL_MD5_PREFIX);
+            const endIndex = oldAppend === null || oldAppend === void 0 ? void 0 : oldAppend.indexOf(ORIGINAL_MD5_POSTFIX, startIndex + ORIGINAL_MD5_PREFIX.length);
+            const originalMd5 = oldAppend.slice(startIndex + ORIGINAL_MD5_PREFIX.length, endIndex);
+            core.info('旧的原文md5:' + originalMd5);
+            core.info('新的原文md5:' + newMd5);
+            if (originalMd5 === newMd5) {
+                core.info('原文不变，不需要edit');
+                return;
+            }
+            else {
+                core.info('2个md5不一致，需要重新翻译提交！');
+            }
+            //md5 end
         }
-        else {
-            core.info('2个md5不一致，需要重新翻译提交！');
-        }
-        //md5 end
         // translate issue comment body to english
         const translateTmp = yield (0, utils_1.translate)(translateOrigin);
         if (!translateTmp || translateTmp == translateOrigin) {

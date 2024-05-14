@@ -24,7 +24,6 @@ export const translateText = {
     return [ translateBody?.[0]?.trim(), translateBody[1].trim() ]
   },
   stringify(body?: string, title?: string) {
-
     // let needCommitComment = body && body !== 'null' && !isEnglish(body)
     // let needCommitTitle = title && title !== 'null' && !isEnglish(title)
     //

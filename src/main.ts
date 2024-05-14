@@ -61,8 +61,8 @@ async function main(): Promise<void> {
   const translateOrigin_MD5 =
     ORIGINAL_MD5_PREFIX + newMd5 + ORIGINAL_MD5_POSTFIX
   core.info('旧的原文md5:' + originalMd5)
-  core.info('新的原文md5:' + translateOrigin_MD5)
-  if (originalMd5 === translateOrigin_MD5) {
+  core.info('新的原文md5:' + newMd5)
+  if (originalMd5 === newMd5) {
     core.info('原文不变，不需要edit')
     return
   } else {

@@ -911,7 +911,6 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.translateText = exports.translate = void 0;
 const core = __importStar(__nccwpck_require__(2186));
 const google_translate_api_1 = __importDefault(__nccwpck_require__(2771));
-const isEnglish_1 = __nccwpck_require__(1289);
 function translate(text) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -937,19 +936,21 @@ exports.translateText = {
         return [(_a = translateBody === null || translateBody === void 0 ? void 0 : translateBody[0]) === null || _a === void 0 ? void 0 : _a.trim(), translateBody[1].trim()];
     },
     stringify(body, title) {
-        let needCommitComment = body && body !== 'null' && !(0, isEnglish_1.isEnglish)(body);
-        let needCommitTitle = title && title !== 'null' && !(0, isEnglish_1.isEnglish)(title);
-        let translateOrigin = null;
-        if (!needCommitComment) {
-            core.info('Detect the issue comment body is english already, ignore.');
-        }
-        if (!needCommitTitle) {
-            core.info('Detect the issue title body is english already, ignore.');
-        }
-        if (!needCommitTitle && !needCommitComment) {
-            core.info('Detect the issue do not need translated, return.');
-            return translateOrigin;
-        }
+        // let needCommitComment = body && body !== 'null' && !isEnglish(body)
+        // let needCommitTitle = title && title !== 'null' && !isEnglish(title)
+        //
+        // let translateOrigin = null
+        //
+        // if (!needCommitComment) {
+        //   core.info('Detect the issue comment body is english already, ignore.')
+        // }
+        // if (!needCommitTitle) {
+        //   core.info('Detect the issue title body is english already, ignore.')
+        // }
+        // if (!needCommitTitle && !needCommitComment) {
+        //   core.info('Detect the issue do not need translated, return.')
+        //   return translateOrigin
+        // }
         return [body || 'null', title].join(MAGIC_JOIN_STRING);
     }
 };

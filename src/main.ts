@@ -39,21 +39,22 @@ async function main(): Promise<void> {
   const octokit = github.getOctokit(botToken)
   const originTitle = title?.split(TRANSLATE_TITLE_DIVING)?.[0]
   const originComment = body?.split(TRANSLATE_DIVIDING_LINE)?.[0]
-  const originalMd5 = body?.slice(
-    body?.indexOf(ORIGINAL_MD5_PREFIX),
-    ORIGINAL_MD5_PREFIX.indexOf(ORIGINAL_MD5_POSTFIX)
-  )
+
   const translateOrigin = translateText.stringify(originComment, originTitle)
   if (!translateOrigin) {
     return
   }
   //md5
-  let newMd5 = Md5.hashStr(translateOrigin)
+  const regex = new RegExp(
+    `${ORIGINAL_MD5_POSTFIX}(.*?)${ORIGINAL_MD5_POSTFIX}`
+  )
+  const matchmd5 = regex.exec(body == null ? '' : body)
+  const originalMd5 = matchmd5 == null ? '' : matchmd5[1]
 
+  let newMd5 = Md5.hashStr(translateOrigin)
   const translateOrigin_MD5 =
     ORIGINAL_MD5_PREFIX + newMd5 + ORIGINAL_MD5_POSTFIX
-  core.info('新的原文 :' + translateOrigin)
-  core.info('原文md5:' + originalMd5)
+  core.info('旧的原文md5:' + originalMd5)
   core.info('新的原文md5:' + translateOrigin_MD5)
 
   if (originalMd5 === translateOrigin_MD5) {

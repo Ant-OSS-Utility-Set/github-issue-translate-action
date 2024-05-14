@@ -76,12 +76,22 @@ async function main(): Promise<void> {
       translateTitle &&
       originTitle !== translateTitle &&
       [originTitle, translateTitle].join(TRANSLATE_TITLE_DIVING)
+    // let body
+    // if(translateComment !=null && originComment !== translateComment){
+    //   body = `${originComment}
+    //           ${TRANSLATE_DIVIDING_LINE}
+    //           ${translateOrigin_MD5}
+    //           ---
+    //           ${translateComment}
+    //           `
+    // }else{
+    //   body = originComment
+    // }
     const body =
       translateComment &&
       originComment !== translateComment &&
-      `${originComment}
-${TRANSLATE_DIVIDING_LINE}
-${translateOrigin_MD5}
+      `${originComment}${TRANSLATE_DIVIDING_LINE}
+      ${translateOrigin_MD5}
 ---
 ${translateComment}
 `

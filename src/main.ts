@@ -40,7 +40,7 @@ async function main(): Promise<void> {
   const originTitle = title?.split(TRANSLATE_TITLE_DIVING)?.[0]
   const originComment = body?.split(TRANSLATE_DIVIDING_LINE)?.[0]
   const originalMd5 = body?.slice(
-    body?.indexOf(ORIGINAL_MD5_PREFIX) + ORIGINAL_MD5_PREFIX.length,
+    body?.indexOf(ORIGINAL_MD5_PREFIX),
     ORIGINAL_MD5_PREFIX.indexOf(ORIGINAL_MD5_POSTFIX)
   )
   core.info('original md5:' + originalMd5)
@@ -50,13 +50,15 @@ async function main(): Promise<void> {
   }
   //md5
   let newMd5 = Md5.hashStr(translateOrigin)
-  core.info('new md5:' + newMd5)
 
-  if (originalMd5 != null && originalMd5 === newMd5) {
-    core.info('原文不变，不需要edit')
-  }
   const translateOrigin_MD5 =
     ORIGINAL_MD5_PREFIX + newMd5 + ORIGINAL_MD5_POSTFIX
+  core.info('new md5:' + translateOrigin_MD5)
+
+  if (originalMd5 != null && originalMd5 === translateOrigin_MD5) {
+    core.info('原文不变，不需要edit')
+  }
+
   //md5 end
   core.info(`translate origin body is: ${translateOrigin_MD5}`)
 

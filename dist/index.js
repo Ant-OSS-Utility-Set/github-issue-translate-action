@@ -77,19 +77,19 @@ function main() {
         const octokit = github.getOctokit(botToken);
         const originTitle = (_b = title === null || title === void 0 ? void 0 : title.split(TRANSLATE_TITLE_DIVING)) === null || _b === void 0 ? void 0 : _b[0];
         const originComment = (_c = body === null || body === void 0 ? void 0 : body.split(TRANSLATE_DIVIDING_LINE)) === null || _c === void 0 ? void 0 : _c[0];
-        const originalMd5 = body === null || body === void 0 ? void 0 : body.slice((body === null || body === void 0 ? void 0 : body.indexOf(ORIGINAL_MD5_PREFIX)) + ORIGINAL_MD5_PREFIX.length, ORIGINAL_MD5_PREFIX.indexOf(ORIGINAL_MD5_POSTFIX));
-        core.info("original md5:" + originalMd5);
+        const originalMd5 = body === null || body === void 0 ? void 0 : body.slice(body === null || body === void 0 ? void 0 : body.indexOf(ORIGINAL_MD5_PREFIX), ORIGINAL_MD5_PREFIX.indexOf(ORIGINAL_MD5_POSTFIX));
+        core.info('original md5:' + originalMd5);
         const translateOrigin = translate_1.translateText.stringify(originComment, originTitle);
         if (!translateOrigin) {
             return;
         }
         //md5
         let newMd5 = ts_md5_1.Md5.hashStr(translateOrigin);
-        core.info("new md5:" + newMd5);
-        if (originalMd5 != null && originalMd5 === newMd5) {
-            core.info("原文不变，不需要edit");
-        }
         const translateOrigin_MD5 = ORIGINAL_MD5_PREFIX + newMd5 + ORIGINAL_MD5_POSTFIX;
+        core.info('new md5:' + translateOrigin_MD5);
+        if (originalMd5 != null && originalMd5 === translateOrigin_MD5) {
+            core.info('原文不变，不需要edit');
+        }
         //md5 end
         core.info(`translate origin body is: ${translateOrigin_MD5}`);
         // translate issue comment body to english

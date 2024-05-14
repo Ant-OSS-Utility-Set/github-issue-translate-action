@@ -63,7 +63,7 @@ async function main(): Promise<void> {
 
   // translate issue comment body to english
   const translateTmp = await translate(translateOrigin)
-  if (!translateTmp || translateTmp === translateOrigin) {
+  if (!translateTmp || translateTmp == translateOrigin) {
     return core.warning('The translateBody is null or same, ignore return.')
   }
 

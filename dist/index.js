@@ -94,7 +94,7 @@ function main() {
         //md5 end
         // translate issue comment body to english
         const translateTmp = yield (0, utils_1.translate)(translateOrigin);
-        if (!translateTmp || translateTmp === translateOrigin) {
+        if (!translateTmp || translateTmp == translateOrigin) {
             return core.warning('The translateBody is null or same, ignore return.');
         }
         core.info(`翻译后的: ${translateTmp}`);

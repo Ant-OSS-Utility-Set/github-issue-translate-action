@@ -43,7 +43,6 @@ async function main(): Promise<void> {
     body?.indexOf(ORIGINAL_MD5_PREFIX),
     ORIGINAL_MD5_PREFIX.indexOf(ORIGINAL_MD5_POSTFIX)
   )
-  core.info('原文  md5:' + originalMd5)
   const translateOrigin = translateText.stringify(originComment, originTitle)
   if (!translateOrigin) {
     return
@@ -54,10 +53,14 @@ async function main(): Promise<void> {
   const translateOrigin_MD5 =
     ORIGINAL_MD5_PREFIX + newMd5 + ORIGINAL_MD5_POSTFIX
   core.info('新的原文 :' + translateOrigin)
-  core.info('新的原文 md5:' + translateOrigin_MD5)
+  core.info('原文md5:' + originalMd5)
+  core.info('新的原文md5:' + translateOrigin_MD5)
 
-  if (originalMd5 != null && originalMd5 === translateOrigin_MD5) {
+  if (originalMd5 === translateOrigin_MD5) {
     core.info('原文不变，不需要edit')
+    return
+  } else {
+    core.info('2个md5不一致，需要重新翻译提交！')
   }
   //md5 end
 

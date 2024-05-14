@@ -55,7 +55,7 @@ const TRANSLATE_DIVIDING_LINE = `<!--This is a translation content dividing line
 const DEFAULT_BOT_MESSAGE = `Bot detected the issue body's language is not English, translate it automatically. 👯👭🏻🧑‍🤝‍🧑👫🧑🏿‍🤝‍🧑🏻👩🏾‍🤝‍👨🏿👬🏿`;
 const DEFAULT_BOT_TOKEN = process.env.GITHUB_TOKEN;
 function main() {
-    var _a, _b, _c;
+    var _a, _b, _c, _d;
     return __awaiter(this, void 0, void 0, function* () {
         core.info(JSON.stringify(github.context));
         const isModifyTitle = core.getInput('IS_MODIFY_TITLE');
@@ -77,14 +77,18 @@ function main() {
         const octokit = github.getOctokit(botToken);
         const originTitle = (_b = title === null || title === void 0 ? void 0 : title.split(TRANSLATE_TITLE_DIVING)) === null || _b === void 0 ? void 0 : _b[0];
         const originComment = (_c = body === null || body === void 0 ? void 0 : body.split(TRANSLATE_DIVIDING_LINE)) === null || _c === void 0 ? void 0 : _c[0];
+        const oldAppend = (_d = body === null || body === void 0 ? void 0 : body.split(TRANSLATE_DIVIDING_LINE)) === null || _d === void 0 ? void 0 : _d[1];
         const translateOrigin = translate_1.translateText.stringify(originComment, originTitle);
         if (!translateOrigin) {
             return;
         }
+        if (typeof oldAppend == 'undefined') {
+            return;
+        }
         //md5
-        const regex = new RegExp(`${ORIGINAL_MD5_POSTFIX}(.*?)${ORIGINAL_MD5_POSTFIX}`);
-        const matchmd5 = regex.exec(body == null ? "" : body);
-        const originalMd5 = matchmd5 == null ? "" : matchmd5[1];
+        const startIndex = oldAppend.indexOf(ORIGINAL_MD5_PREFIX);
+        const endIndex = oldAppend === null || oldAppend === void 0 ? void 0 : oldAppend.indexOf(ORIGINAL_MD5_POSTFIX, startIndex + ORIGINAL_MD5_PREFIX.length);
+        const originalMd5 = oldAppend.slice(startIndex + ORIGINAL_MD5_PREFIX.length, endIndex);
         let newMd5 = ts_md5_1.Md5.hashStr(translateOrigin);
         const translateOrigin_MD5 = ORIGINAL_MD5_PREFIX + newMd5 + ORIGINAL_MD5_POSTFIX;
         core.info('旧的原文md5:' + originalMd5);

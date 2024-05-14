@@ -39,30 +39,36 @@ async function main(): Promise<void> {
   const octokit = github.getOctokit(botToken)
   const originTitle = title?.split(TRANSLATE_TITLE_DIVING)?.[0]
   const originComment = body?.split(TRANSLATE_DIVIDING_LINE)?.[0]
-
+  const oldAppend = body?.split(TRANSLATE_DIVIDING_LINE)?.[1]
   const translateOrigin = translateText.stringify(originComment, originTitle)
   if (!translateOrigin) {
     return
   }
+  if (typeof oldAppend == 'undefined') {
+    return
+  }
   //md5
-  const regex = new RegExp(
-    `${ORIGINAL_MD5_POSTFIX}(.*?)${ORIGINAL_MD5_POSTFIX}`
+  const startIndex = oldAppend.indexOf(ORIGINAL_MD5_PREFIX)
+  const endIndex = oldAppend?.indexOf(
+    ORIGINAL_MD5_POSTFIX,
+    startIndex + ORIGINAL_MD5_PREFIX.length
   )
-  const matchmd5 = regex.exec(body == null ? '' : body)
-  const originalMd5 = matchmd5 == null ? '' : matchmd5[1]
-
+  const originalMd5 = oldAppend.slice(
+    startIndex + ORIGINAL_MD5_PREFIX.length,
+    endIndex
+  )
   let newMd5 = Md5.hashStr(translateOrigin)
   const translateOrigin_MD5 =
     ORIGINAL_MD5_PREFIX + newMd5 + ORIGINAL_MD5_POSTFIX
   core.info('旧的原文md5:' + originalMd5)
   core.info('新的原文md5:' + translateOrigin_MD5)
-
   if (originalMd5 === translateOrigin_MD5) {
     core.info('原文不变，不需要edit')
     return
   } else {
     core.info('2个md5不一致，需要重新翻译提交！')
   }
+
   //md5 end
 
   // translate issue comment body to english

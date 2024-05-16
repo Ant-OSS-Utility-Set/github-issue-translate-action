@@ -915,8 +915,8 @@ function translate(text) {
             const translatedChunks = [];
             for (const chunk of chunks) {
                 // const resp = await  GoogleTranslate(text, {to: 'en'});
-                // core.info("翻译块："+resp.text)
                 // translatedChunks.push(resp.text);
+                core.info("翻译块：" + chunk);
                 yield bing_translate_api_1.default.translate(chunk, "zh-Hans", "en").then(res => {
                     const result = res === null || res === void 0 ? void 0 : res.translation;
                     core.info("翻译成功：" + result);
@@ -952,12 +952,14 @@ function splitText(text, chunkSize) {
 const MAGIC_JOIN_STRING = '@@====';
 exports.translateText = {
     parse(text) {
-        var _a;
         if (!text) {
-            return [undefined, undefined];
+            return ['', ''];
         }
         const translateBody = text.split(MAGIC_JOIN_STRING);
-        return [(_a = translateBody === null || translateBody === void 0 ? void 0 : translateBody[0]) === null || _a === void 0 ? void 0 : _a.trim(), translateBody[1].trim()];
+        if (translateBody.length < 2) {
+            core.error("翻译后的文本没有分隔符");
+        }
+        return [translateBody === null || translateBody === void 0 ? void 0 : translateBody[0], translateBody === null || translateBody === void 0 ? void 0 : translateBody[1]];
     },
     stringify(body, title) {
         return [body || 'null', title].join(MAGIC_JOIN_STRING);

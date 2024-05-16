@@ -9,8 +9,8 @@ export async function translate(text: string): Promise<string | undefined> {
     const translatedChunks: (string | undefined)[] = [];
     for (const chunk of chunks) {
       // const resp = await  GoogleTranslate(text, {to: 'en'});
-      // core.info("翻译块："+resp.text)
       // translatedChunks.push(resp.text);
+      core.info("翻译块："+chunk)
       await BingTrans.translate(chunk, "zh-Hans", "en").then(res => {
         const result = res?.translation;
         core.info("翻译成功：" + result);
@@ -49,11 +49,14 @@ const MAGIC_JOIN_STRING = '@@===='
 export const translateText = {
   parse(text?: string) {
     if (!text) {
-      return [ undefined, undefined ]
+      return [ '', '']
     }
 
     const translateBody: string[] = text.split(MAGIC_JOIN_STRING)
-    return [ translateBody?.[0]?.trim(), translateBody[1].trim() ]
+    if(translateBody.length<2){
+      core.error("翻译后的文本没有分隔符")
+    }
+    return [ translateBody?.[0], translateBody?.[1] ]
   },
   stringify(body?: string, title?: string) {
     return [ body || 'null', title ].join(MAGIC_JOIN_STRING)

@@ -40,7 +40,6 @@ async function main(): Promise<void> {
   const originTitle = title?.split(TRANSLATE_TITLE_DIVING)?.[0]
   const originComment = body?.split(TRANSLATE_DIVIDING_LINE)?.[0].trimEnd()
   const oldAppend = body?.split(TRANSLATE_DIVIDING_LINE)?.[1]
-  core.info('评论，题目：' + originComment + ';' + originTitle)
   const translateOrigin = translateText.stringify(originComment, originTitle)
   let newMd5 = Md5.hashStr(translateOrigin)
   const translateOrigin_MD5 =
@@ -76,8 +75,6 @@ async function main(): Promise<void> {
     return core.warning('The translateBody is null or same, ignore return.')
   }
 
-  core.info(`翻译后的: ${translateTmp}`)
-
   let [translateComment, translateTitle] = translateText.parse(translateTmp)
 
   if (shouldAppendContent) {
@@ -94,7 +91,6 @@ ${translateOrigin_MD5}
 ---
 ${translateComment}
 `
-    core.info(`最终更新的body: ${body}`)
 
     await update(octokit, body || undefined, title || undefined)
   } else {

@@ -914,10 +914,8 @@ function translate(text) {
             core.info("分为几个部分翻译：" + chunks.length);
             const translatedChunks = [];
             for (const chunk of chunks) {
-                // const resp = await  GoogleTranslate(text, {to: 'en'});
-                // translatedChunks.push(resp.text);
                 core.info("翻译块：" + chunk);
-                yield bing_translate_api_1.default.translate(chunk, "zh-Hans", "en").then(res => {
+                yield bing_translate_api_1.default.translate(chunk, "zh", "en").then(res => {
                     const result = res === null || res === void 0 ? void 0 : res.translation;
                     core.info("翻译成功：" + result);
                     translatedChunks.push(result);

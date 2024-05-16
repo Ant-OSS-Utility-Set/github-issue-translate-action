@@ -8,10 +8,8 @@ export async function translate(text: string): Promise<string | undefined> {
     core.info("分为几个部分翻译：" +chunks.length);
     const translatedChunks: (string | undefined)[] = [];
     for (const chunk of chunks) {
-      // const resp = await  GoogleTranslate(text, {to: 'en'});
-      // translatedChunks.push(resp.text);
       core.info("翻译块："+chunk)
-      await BingTrans.translate(chunk, "zh-Hans", "en").then(res => {
+      await BingTrans.translate(chunk, "zh", "en").then(res => {
         const result = res?.translation;
         core.info("翻译成功：" + result);
         translatedChunks.push(result);

@@ -1096,7 +1096,7 @@ translate(text).then(r => console.log("完成！！！"));
 function translate(text) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const chunks = splitText(text, 2000);
+            const chunks = splitText(text, 1000);
             core.info("分为几个部分翻译：" + chunks.length);
             const translatedChunks = [];
             for (const chunk of chunks) {

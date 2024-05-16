@@ -75,7 +75,7 @@ async function main(): Promise<void> {
     return core.warning('The translateBody is null or same, ignore return.')
   }
 
-  let [translateComment, translateTitle] = translateText.parse(translateTmp)
+  let [translateTitle, translateComment] = translateText.parse(translateTmp)
 
   if (shouldAppendContent) {
     const title =

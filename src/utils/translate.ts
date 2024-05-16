@@ -59,6 +59,6 @@ export const translateText = {
     return [ translateBody?.[0], translateBody?.[1] ]
   },
   stringify(body?: string, title?: string) {
-    return [ body || 'null', title ].join(MAGIC_JOIN_STRING)
+    return [ title,body ].join(MAGIC_JOIN_STRING)
   }
 }

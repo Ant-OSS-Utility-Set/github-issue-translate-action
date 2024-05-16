@@ -103,7 +103,7 @@ function main() {
         if (!translateTmp || translateTmp == translateOrigin) {
             return core.warning('The translateBody is null or same, ignore return.');
         }
-        let [translateComment, translateTitle] = translate_1.translateText.parse(translateTmp);
+        let [translateTitle, translateComment] = translate_1.translateText.parse(translateTmp);
         if (shouldAppendContent) {
             const title = translateTitle &&
                 originTitle !== translateTitle &&
@@ -962,7 +962,7 @@ exports.translateText = {
         return [translateBody === null || translateBody === void 0 ? void 0 : translateBody[0], translateBody === null || translateBody === void 0 ? void 0 : translateBody[1]];
     },
     stringify(body, title) {
-        return [body || 'null', title].join(MAGIC_JOIN_STRING);
+        return [title, body].join(MAGIC_JOIN_STRING);
     }
 };
 

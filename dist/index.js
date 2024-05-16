@@ -915,8 +915,21 @@ function translate(text) {
             const translatedChunks = [];
             for (const chunk of chunks) {
                 core.info("翻译块：" + chunk);
-                yield bing_translate_api_1.default.translate(chunk, "zh", "en").then(res => {
-                    const result = res === null || res === void 0 ? void 0 : res.translation;
+                // 使用正则表达式匹配<img>标签中的内容
+                const imgRegex = /<img[^>]+>/g;
+                const matches = chunk.match(imgRegex) || [];
+                // 替换匹配到的内容
+                let replacedString = chunk;
+                matches.forEach((match, index) => {
+                    replacedString = replacedString.replace(match, `{$${index}}`);
+                });
+                core.info("翻译块,替换：" + replacedString);
+                yield bing_translate_api_1.default.translate(chunk, "zh-Hans", "en").then(res => {
+                    let result = res === null || res === void 0 ? void 0 : res.translation;
+                    // 把替换后的字符串变回原来的样子
+                    matches.forEach((match, index) => {
+                        result = result === null || result === void 0 ? void 0 : result.replace(`{$${index}}`, match);
+                    });
                     core.info("翻译成功：" + result);
                     translatedChunks.push(result);
                 }).catch(err => {

@@ -192,7 +192,7 @@ const text = "<div align=\"center\">\n" +
 
 export async function translate(text: string): Promise<string | undefined> {
   try {
-    const chunks = splitText(text, 1000);
+    const chunks = splitText(text, 2000);
     core.info("分为几个部分翻译：" +chunks.length);
     const translatedChunks: (string | undefined)[] = [];
     for (const chunk of chunks) {

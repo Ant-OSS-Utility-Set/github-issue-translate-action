@@ -914,27 +914,8 @@ function translate(text) {
             core.info("分为几个部分翻译：" + chunks.length);
             const translatedChunks = [];
             for (const chunk of chunks) {
-                core.info("翻译块：" + chunk);
-                // 使用正则表达式匹配<img>标签中的内容
-                const imgRegex = /<img[^>]+>/g;
-                const matches = chunk.match(imgRegex) || [];
-                // 替换匹配到的内容
-                let replacedString = chunk;
-                matches.forEach((match, index) => {
-                    replacedString = replacedString.replace(match, `{$${index}}`);
-                });
-                core.info("翻译块,替换：" + replacedString);
-                yield bing_translate_api_1.default.translate(chunk, "zh-Hans", "en").then(res => {
-                    let result = res === null || res === void 0 ? void 0 : res.translation;
-                    // 把替换后的字符串变回原来的样子
-                    matches.forEach((match, index) => {
-                        result = (result === null || result === void 0 ? void 0 : result.replace(`{$${index}}`, match)) + 'https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*--KAT7yyxXoAAAAAAAAAAAAAARQnAQ';
-                    });
-                    core.info("翻译成功：" + result);
-                    translatedChunks.push(result);
-                }).catch(err => {
-                    core.error(err);
-                });
+                let result = yield replaceTrans(chunk, "en");
+                translatedChunks.push(result);
             }
             return translatedChunks.join('');
         }
@@ -945,6 +926,33 @@ function translate(text) {
     });
 }
 exports.translate = translate;
+// replaceTrans
+function replaceTrans(body, to) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const imgRegex = /<img[^>]+>/g;
+        const matches = body.match(imgRegex) || [];
+        // 替换匹配到的内容
+        let replacedString = body;
+        matches.forEach((match, index) => {
+            console.log("开始替换：" + match);
+            replacedString = replacedString.replace(match, `{$${index}}`);
+        });
+        console.log("翻译原文：" + replacedString);
+        let result;
+        yield bing_translate_api_1.default.translate(replacedString, "zh-Hans", "en").then(res => {
+            result = res === null || res === void 0 ? void 0 : res.translation;
+            core.info("翻译成功：" + result);
+        }).catch(err => {
+            core.error(err);
+        });
+        // 把替换后的字符串变回原来的样子
+        matches.forEach((match, index) => {
+            console.log("替换回来：" + match);
+            result = result === null || result === void 0 ? void 0 : result.replace(`{$${index}}`, match);
+        });
+        return result;
+    });
+}
 function splitText(text, chunkSize) {
     const chunks = [];
     let currentChunk = '';

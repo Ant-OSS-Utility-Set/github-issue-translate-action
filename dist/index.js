@@ -928,7 +928,7 @@ function translate(text) {
                     let result = res === null || res === void 0 ? void 0 : res.translation;
                     // 把替换后的字符串变回原来的样子
                     matches.forEach((match, index) => {
-                        result = result === null || result === void 0 ? void 0 : result.replace(`{$${index}}`, match);
+                        result = (result === null || result === void 0 ? void 0 : result.replace(`{$${index}}`, match)) + 'https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*--KAT7yyxXoAAAAAAAAAAAAAARQnAQ';
                     });
                     core.info("翻译成功：" + result);
                     translatedChunks.push(result);

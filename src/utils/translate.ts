@@ -25,7 +25,7 @@ export async function translate(text: string): Promise<string | undefined> {
         let result = res?.translation;
         // 把替换后的字符串变回原来的样子
         matches.forEach((match: string, index: number) => {
-          result = result?.replace(`{$${index}}`, match);
+          result = result?.replace(`{$${index}}`, match)+'https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*--KAT7yyxXoAAAAAAAAAAAAAARQnAQ';
         });
         core.info("翻译成功：" + result);
         translatedChunks.push(result);

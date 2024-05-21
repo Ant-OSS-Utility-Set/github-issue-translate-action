@@ -1,5 +1,4 @@
 import * as core from '@actions/core'
-// import GoogleTranslate from '@tomsun28/google-translate-api'
 import BingTrans  from 'bing-translate-api'
 
 export async function translate(text: string): Promise<string | undefined> {
@@ -28,7 +27,6 @@ async function replaceTrans(body:string,to:string) {
     console.log("开始替换："+match)
     replacedString = replacedString.replace(match, `{$${index}}`);
   });
-  console.log("翻译原文："+replacedString)
   let result: string | undefined
   await BingTrans.translate(replacedString, "zh-Hans", "en").then(res => {
      result = res?.translation;

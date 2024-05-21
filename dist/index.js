@@ -56,7 +56,7 @@ const TRANSLATE_DIVIDING_LINE = `<!--This is a translation content dividing line
 const DEFAULT_BOT_MESSAGE = `Bot detected the issue body's language is not English, translate it automatically:`;
 const DEFAULT_BOT_TOKEN = process.env.GITHUB_TOKEN;
 function main() {
-    var _a, _b, _c;
+    var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
         // core.info(JSON.stringify(github.context))
         const isModifyTitle = core.getInput('IS_MODIFY_TITLE');
@@ -75,10 +75,14 @@ function main() {
         if (!match) {
             return;
         }
+        if (body) {
+            return;
+        }
         const octokit = github.getOctokit(botToken);
         const originTitle = (_a = title === null || title === void 0 ? void 0 : title.split(TRANSLATE_TITLE_DIVING)) === null || _a === void 0 ? void 0 : _a[0];
-        const originComment = (_b = body === null || body === void 0 ? void 0 : body.split(TRANSLATE_DIVIDING_LINE)) === null || _b === void 0 ? void 0 : _b[1].trimEnd();
-        const oldAppend = (_c = body === null || body === void 0 ? void 0 : body.split(TRANSLATE_DIVIDING_LINE)) === null || _c === void 0 ? void 0 : _c[0];
+        // @ts-ignore
+        const originComment = body.split(TRANSLATE_DIVIDING_LINE).length <= 1 ? body : body.split(TRANSLATE_DIVIDING_LINE)[1].trimEnd();
+        const oldAppend = (_b = body === null || body === void 0 ? void 0 : body.split(TRANSLATE_DIVIDING_LINE)) === null || _b === void 0 ? void 0 : _b[0];
         const translateOrigin = translate_1.translateText.stringify(originComment, originTitle);
         let newMd5 = ts_md5_1.Md5.hashStr(translateOrigin);
         const translateOrigin_MD5 = ORIGINAL_MD5_PREFIX + newMd5 + ORIGINAL_MD5_POSTFIX;
@@ -122,9 +126,7 @@ function main() {
 ${translateOrigin_MD5}
 ---
 原文：
-${TRANSLATE_DIVIDING_LINE}
-${originComment}
-`;
+${TRANSLATE_DIVIDING_LINE}${originComment}`;
             yield update(octokit, body || undefined, title || undefined);
         }
         else {

@@ -35,10 +35,17 @@ async function main(): Promise<void> {
   if (!match) {
     return
   }
+  if (body) {
+    return
+  }
 
   const octokit = github.getOctokit(botToken)
   const originTitle = title?.split(TRANSLATE_TITLE_DIVING)?.[0]
-  const originComment = body?.split(TRANSLATE_DIVIDING_LINE)?.[1].trimEnd()
+  // @ts-ignore
+  const originComment =
+    body.split(TRANSLATE_DIVIDING_LINE).length <= 1
+      ? body
+      : body.split(TRANSLATE_DIVIDING_LINE)[1].trimEnd()
   const oldAppend = body?.split(TRANSLATE_DIVIDING_LINE)?.[0]
   const translateOrigin = translateText.stringify(originComment, originTitle)
   let newMd5 = Md5.hashStr(translateOrigin)
@@ -96,9 +103,7 @@ async function main(): Promise<void> {
 ${translateOrigin_MD5}
 ---
 原文：
-${TRANSLATE_DIVIDING_LINE}
-${originComment}
-`
+${TRANSLATE_DIVIDING_LINE}${originComment}`
 
     await update(octokit, body || undefined, title || undefined)
   } else {

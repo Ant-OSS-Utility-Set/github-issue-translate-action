@@ -123,12 +123,13 @@ function main() {
                 // ---
                 // ${translateComment}
                 // `
-                `
+                `    ${DEFAULT_BOT_MESSAGE}
       ${translateComment}
 ${translateOrigin_MD5}
 ---
 原文：
-${TRANSLATE_DIVIDING_LINE}${originComment}`;
+${TRANSLATE_DIVIDING_LINE}
+    ${originComment}`;
             yield update(octokit, body || undefined, title || undefined);
         }
         else {

@@ -104,7 +104,7 @@ ${translateOrigin_MD5}
 ---
 原文：
 ${TRANSLATE_DIVIDING_LINE}
-    ${originComment}`
+${originComment}`
 
     await update(octokit, body || undefined, title || undefined)
   } else {

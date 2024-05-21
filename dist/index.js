@@ -75,13 +75,15 @@ function main() {
         if (!match) {
             return;
         }
-        if (body) {
+        if (typeof body == 'undefined') {
             return;
         }
         const octokit = github.getOctokit(botToken);
         const originTitle = (_a = title === null || title === void 0 ? void 0 : title.split(TRANSLATE_TITLE_DIVING)) === null || _a === void 0 ? void 0 : _a[0];
         // @ts-ignore
-        const originComment = body.split(TRANSLATE_DIVIDING_LINE).length <= 1 ? body : body.split(TRANSLATE_DIVIDING_LINE)[1].trimEnd();
+        const originComment = body.split(TRANSLATE_DIVIDING_LINE).length <= 1
+            ? body
+            : body.split(TRANSLATE_DIVIDING_LINE)[1].trimEnd();
         const oldAppend = (_b = body === null || body === void 0 ? void 0 : body.split(TRANSLATE_DIVIDING_LINE)) === null || _b === void 0 ? void 0 : _b[0];
         const translateOrigin = translate_1.translateText.stringify(originComment, originTitle);
         let newMd5 = ts_md5_1.Md5.hashStr(translateOrigin);

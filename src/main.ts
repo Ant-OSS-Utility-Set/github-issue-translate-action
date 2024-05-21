@@ -35,7 +35,7 @@ async function main(): Promise<void> {
   if (!match) {
     return
   }
-  if (body) {
+  if (typeof body == 'undefined') {
     return
   }
 

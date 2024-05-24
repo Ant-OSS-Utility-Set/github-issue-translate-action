@@ -117,19 +117,18 @@ function main() {
                 [originTitle, translateTitle].join(TRANSLATE_TITLE_DIVING);
             const body = translateComment &&
                 originComment !== translateComment &&
-                //       `${originComment}
-                // ${TRANSLATE_DIVIDING_LINE}
-                // ${translateOrigin_MD5}
-                // ---
-                // ${translateComment}
-                // `
                 `    ${DEFAULT_BOT_MESSAGE}
       ${translateComment}
 ${translateOrigin_MD5}
 ---
 原文：
+<details>
+<summary>
 ${TRANSLATE_DIVIDING_LINE}
-${originComment}`;
+${originComment}
+</summary>
+</details>
+`;
             yield update(octokit, body || undefined, title || undefined);
         }
         else {

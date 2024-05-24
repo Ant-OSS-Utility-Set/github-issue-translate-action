@@ -101,8 +101,9 @@ async function main(): Promise<void> {
       ${translateComment}
 ${translateOrigin_MD5}
 ---
-原文：
-<details><summary>${TRANSLATE_DIVIDING_LINE}${originComment}</summary></details>`
+<details><summary>原文</summary>
+${TRANSLATE_DIVIDING_LINE}${originComment}
+</details>`
 
     await update(octokit, body || undefined, title || undefined)
   } else {

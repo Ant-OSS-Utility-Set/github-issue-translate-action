@@ -87,7 +87,7 @@ function main() {
                 .split(TRANSLATE_DIVIDING_LINE)[1]
                 .replace('</summary></details>', '')
                 .trimEnd();
-        const oldAppend = (_b = body === null || body === void 0 ? void 0 : body.split(TRANSLATE_DIVIDING_LINE)) === null || _b === void 0 ? void 0 : _b[0].replace("<details><summary>", "");
+        const oldAppend = (_b = body === null || body === void 0 ? void 0 : body.split(TRANSLATE_DIVIDING_LINE)) === null || _b === void 0 ? void 0 : _b[0].replace('<details><summary>', '');
         const translateOrigin = translate_1.translateText.stringify(originComment, originTitle);
         let newMd5 = ts_md5_1.Md5.hashStr(translateOrigin);
         const translateOrigin_MD5 = ORIGINAL_MD5_PREFIX + newMd5 + ORIGINAL_MD5_POSTFIX;
@@ -124,8 +124,9 @@ function main() {
       ${translateComment}
 ${translateOrigin_MD5}
 ---
-原文：
-<details><summary>${TRANSLATE_DIVIDING_LINE}${originComment}</summary></details>`;
+<details><summary>原文</summary>
+${TRANSLATE_DIVIDING_LINE}${originComment}
+</details>`;
             yield update(octokit, body || undefined, title || undefined);
         }
         else {

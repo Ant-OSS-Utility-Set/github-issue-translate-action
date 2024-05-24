@@ -45,8 +45,13 @@ async function main(): Promise<void> {
   const originComment =
     body.split(TRANSLATE_DIVIDING_LINE).length <= 1
       ? body
-      : body.split(TRANSLATE_DIVIDING_LINE)[1].trimEnd()
-  const oldAppend = body?.split(TRANSLATE_DIVIDING_LINE)?.[0]
+      : body
+          .split(TRANSLATE_DIVIDING_LINE)[1]
+          .replace('</summary></details>', '')
+          .trimEnd()
+  const oldAppend = body
+    ?.split(TRANSLATE_DIVIDING_LINE)?.[0]
+    .replace('<details><summary>', '')
   const translateOrigin = translateText.stringify(originComment, originTitle)
   let newMd5 = Md5.hashStr(translateOrigin)
   const translateOrigin_MD5 =
@@ -97,13 +102,7 @@ async function main(): Promise<void> {
 ${translateOrigin_MD5}
 ---
 原文：
-<details>
-<summary>
-${TRANSLATE_DIVIDING_LINE}
-${originComment}
-</summary>
-</details>
-`
+<details><summary>${TRANSLATE_DIVIDING_LINE}${originComment}</summary></details>`
 
     await update(octokit, body || undefined, title || undefined)
   } else {

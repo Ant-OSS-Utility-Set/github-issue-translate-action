@@ -45,10 +45,14 @@ async function main(): Promise<void> {
   const originTitle = title?.split(TRANSLATE_TITLE_DIVING)?.[0]
   // @ts-ignore解析出来原始数据
 
-  const originComment = body.slice(
-    body.indexOf(ORIGIN_CONTENT_PREFIX) + ORIGIN_CONTENT_PREFIX.length,
-    body.indexOf(ORIGIN_CONTENT_POSTFIX)
-  )
+  let originComment = body
+  if (body.indexOf(ORIGINAL_MD5_PREFIX) > -1) {
+    originComment = body.slice(
+      body.indexOf(ORIGIN_CONTENT_PREFIX) + ORIGIN_CONTENT_PREFIX.length,
+      body.indexOf(ORIGIN_CONTENT_POSTFIX)
+    )
+  }
+
   const startIndex = body.indexOf(ORIGINAL_MD5_PREFIX)
 
   const titleContentOrigin = translateText.stringify(originComment, originTitle)

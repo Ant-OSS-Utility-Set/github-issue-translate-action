@@ -86,7 +86,8 @@ function main() {
         const originComment = body.substring(body.indexOf(ORIGIN_CONTENT_PREFIX) + ORIGIN_CONTENT_PREFIX.length, body.indexOf(ORIGIN_CONTENT_POSTFIX));
         const startIndex = body.indexOf(ORIGINAL_MD5_PREFIX);
         const titleContentOrigin = translate_1.translateText.stringify(originComment, originTitle);
-        core.info("原始标题和内容：" + titleContentOrigin);
+        core.info('原始标题：' + originTitle);
+        core.info('原始内容：' + originComment);
         let newMd5 = ts_md5_1.Md5.hashStr(titleContentOrigin);
         const translateOrigin_MD5 = ORIGINAL_MD5_PREFIX + newMd5 + ORIGINAL_MD5_POSTFIX;
         if (startIndex > -1) {
@@ -112,6 +113,8 @@ function main() {
             return core.warning('The translateBody is null or same, ignore return.');
         }
         let [translateTitle, translateComment] = translate_1.translateText.parse(translateTmp);
+        core.info("翻译标题：" + translateTitle);
+        core.info("翻译内容：" + translateComment);
         if (shouldAppendContent) {
             let title = '';
             if (translateTitle && originTitle !== translateTitle) {
@@ -121,8 +124,8 @@ function main() {
             if (translateComment && originComment !== translateComment) {
                 body = `
               ${DEFAULT_BOT_MESSAGE}
-              ${translateComment}
               ---
+              ${translateComment}
               ${ORIGIN_CONTENT_PREFIX}${originComment}${ORIGIN_CONTENT_POSTFIX}
               ${translateOrigin_MD5}
               `;

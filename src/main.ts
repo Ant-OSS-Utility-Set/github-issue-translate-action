@@ -51,7 +51,8 @@ async function main(): Promise<void> {
   const startIndex = body.indexOf(ORIGINAL_MD5_PREFIX)
 
   const titleContentOrigin = translateText.stringify(originComment, originTitle)
-  core.info('原始标题和内容：' + titleContentOrigin)
+  core.info('原始标题：' + originTitle)
+  core.info('原始内容：' + originComment)
   let newMd5 = Md5.hashStr(titleContentOrigin)
   const translateOrigin_MD5 =
     ORIGINAL_MD5_PREFIX + newMd5 + ORIGINAL_MD5_POSTFIX
@@ -85,6 +86,8 @@ async function main(): Promise<void> {
 
   let [translateTitle, translateComment] = translateText.parse(translateTmp)
 
+  core.info('翻译标题：' + translateTitle)
+  core.info('翻译内容：' + translateComment)
   if (shouldAppendContent) {
     let title = ''
     if (translateTitle && originTitle !== translateTitle) {
@@ -95,8 +98,8 @@ async function main(): Promise<void> {
     if (translateComment && originComment !== translateComment) {
       body = `
               ${DEFAULT_BOT_MESSAGE}
-              ${translateComment}
               ---
+              ${translateComment}
               ${ORIGIN_CONTENT_PREFIX}${originComment}${ORIGIN_CONTENT_POSTFIX}
               ${translateOrigin_MD5}
               `

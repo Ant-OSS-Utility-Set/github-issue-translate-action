@@ -83,7 +83,7 @@ function main() {
         const octokit = github.getOctokit(botToken);
         const originTitle = (_a = title === null || title === void 0 ? void 0 : title.split(TRANSLATE_TITLE_DIVING)) === null || _a === void 0 ? void 0 : _a[0];
         // @ts-ignore解析出来原始数据
-        const originComment = body.substring(body.indexOf(ORIGIN_CONTENT_PREFIX) + ORIGIN_CONTENT_PREFIX.length, body.indexOf(ORIGIN_CONTENT_POSTFIX));
+        const originComment = body.slice(body.indexOf(ORIGIN_CONTENT_PREFIX) + ORIGIN_CONTENT_PREFIX.length, body.indexOf(ORIGIN_CONTENT_POSTFIX));
         const startIndex = body.indexOf(ORIGINAL_MD5_PREFIX);
         const titleContentOrigin = translate_1.translateText.stringify(originComment, originTitle);
         core.info('原始标题：' + originTitle);
@@ -113,8 +113,8 @@ function main() {
             return core.warning('The translateBody is null or same, ignore return.');
         }
         let [translateTitle, translateComment] = translate_1.translateText.parse(translateTmp);
-        core.info("翻译标题：" + translateTitle);
-        core.info("翻译内容：" + translateComment);
+        core.info('翻译标题：' + translateTitle);
+        core.info('翻译内容：' + translateComment);
         if (shouldAppendContent) {
             let title = '';
             if (translateTitle && originTitle !== translateTitle) {

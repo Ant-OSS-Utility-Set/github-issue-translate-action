@@ -44,7 +44,8 @@ async function main(): Promise<void> {
   const octokit = github.getOctokit(botToken)
   const originTitle = title?.split(TRANSLATE_TITLE_DIVING)?.[0]
   // @ts-ignore解析出来原始数据
-  const originComment = body.substring(
+
+  const originComment = body.slice(
     body.indexOf(ORIGIN_CONTENT_PREFIX) + ORIGIN_CONTENT_PREFIX.length,
     body.indexOf(ORIGIN_CONTENT_POSTFIX)
   )

@@ -1,5 +1,5 @@
 ![](./assets/logo.svg)
-# GitHub Translate Action
+# GitHub Issue Translate Action
 
 En | [中文](./README_CN.md)
 
@@ -40,7 +40,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: 15669072513/github-translate-action@main
+      - uses: Ant-OSS-Utility-Set/github-issue-translate-action@main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:

@@ -101,7 +101,7 @@ async function main(): Promise<void> {
 
     let body = ''
     if (translateComment && originComment !== translateComment) {
-      body = `${DEFAULT_BOT_MESSAGE}
+      body = `    ${DEFAULT_BOT_MESSAGE}
 ---
 ${translateComment}
 ${ORIGIN_CONTENT_PREFIX}${originComment}${ORIGIN_CONTENT_POSTFIX}

@@ -98,7 +98,7 @@ async function main(): Promise<void> {
       translateComment &&
       originComment !== translateComment &&
       `    ${DEFAULT_BOT_MESSAGE}
-      ${translateComment}
+${translateComment}
 ${translateOrigin_MD5}
 ---
 <details><summary>原文</summary>

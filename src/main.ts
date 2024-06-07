@@ -101,13 +101,11 @@ async function main(): Promise<void> {
 
     let body = ''
     if (translateComment && originComment !== translateComment) {
-      body = `
-              ${DEFAULT_BOT_MESSAGE}
-              ---
-              ${translateComment}
-              ${ORIGIN_CONTENT_PREFIX}${originComment}${ORIGIN_CONTENT_POSTFIX}
-              ${translateOrigin_MD5}
-              `
+      body = `${DEFAULT_BOT_MESSAGE}
+---
+${translateComment}
+${ORIGIN_CONTENT_PREFIX}${originComment}${ORIGIN_CONTENT_POSTFIX}
+${translateOrigin_MD5}`
     }
     await update(octokit, body || undefined, title || undefined)
   } else {

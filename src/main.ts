@@ -44,20 +44,26 @@ async function main(): Promise<void> {
   const octokit = github.getOctokit(botToken)
   const originTitle = title?.split(TRANSLATE_TITLE_DIVING)?.[0]
   // @ts-ignore解析出来原始数据
-  const originComment =body.substring(body.indexOf(ORIGIN_CONTENT_PREFIX) + ORIGIN_CONTENT_PREFIX.length, body.indexOf(ORIGIN_CONTENT_POSTFIX));
+  const originComment = body.substring(
+    body.indexOf(ORIGIN_CONTENT_PREFIX) + ORIGIN_CONTENT_PREFIX.length,
+    body.indexOf(ORIGIN_CONTENT_POSTFIX)
+  )
   const startIndex = body.indexOf(ORIGINAL_MD5_PREFIX)
 
-
   const titleContentOrigin = translateText.stringify(originComment, originTitle)
-  core.info("原始标题和内容："+titleContentOrigin)
+  core.info('原始标题和内容：' + titleContentOrigin)
   let newMd5 = Md5.hashStr(titleContentOrigin)
-  const translateOrigin_MD5 = ORIGINAL_MD5_PREFIX + newMd5 + ORIGINAL_MD5_POSTFIX
-  if (startIndex>-1) {
+  const translateOrigin_MD5 =
+    ORIGINAL_MD5_PREFIX + newMd5 + ORIGINAL_MD5_POSTFIX
+  if (startIndex > -1) {
     core.info('比较md5开始：')
     //md5
     const startIndex = body.indexOf(ORIGINAL_MD5_PREFIX)
     const endIndex = body.indexOf(ORIGINAL_MD5_POSTFIX)
-    const originalMd5 = body.slice(startIndex + ORIGINAL_MD5_PREFIX.length, endIndex )
+    const originalMd5 = body.slice(
+      startIndex + ORIGINAL_MD5_PREFIX.length,
+      endIndex
+    )
 
     core.info('旧的原文md5:' + originalMd5)
     core.info('新的原文md5:' + newMd5)
@@ -80,12 +86,12 @@ async function main(): Promise<void> {
   let [translateTitle, translateComment] = translateText.parse(translateTmp)
 
   if (shouldAppendContent) {
-    let title = '';
+    let title = ''
     if (translateTitle && originTitle !== translateTitle) {
-      title = [originTitle, translateTitle].join(TRANSLATE_TITLE_DIVING);
+      title = [originTitle, translateTitle].join(TRANSLATE_TITLE_DIVING)
     }
 
-    let body = '';
+    let body = ''
     if (translateComment && originComment !== translateComment) {
       body = `
               ${DEFAULT_BOT_MESSAGE}
@@ -94,7 +100,6 @@ async function main(): Promise<void> {
               ${ORIGIN_CONTENT_PREFIX}${originComment}${ORIGIN_CONTENT_POSTFIX}
               ${translateOrigin_MD5}
               `
-
     }
     await update(octokit, body || undefined, title || undefined)
   } else {

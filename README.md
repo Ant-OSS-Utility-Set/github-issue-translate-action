@@ -3,6 +3,7 @@
 
 En | [中文](./README_CN.md)
 
+test issue format ,don't merege 
 A GitHub Action to translate non-English GitHub issues and GitHub discussions into English automatically.
 
 ## Input variables

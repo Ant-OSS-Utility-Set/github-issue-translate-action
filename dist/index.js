@@ -78,7 +78,7 @@ function main() {
             return;
         }
         if (typeof body == 'undefined' || body == null) {
-            core.info("body 读取为空，直接返回");
+            core.info('body 读取为空，直接返回');
             return;
         }
         const octokit = github.getOctokit(botToken);
@@ -87,13 +87,15 @@ function main() {
         let originComment = body;
         if (body.indexOf(ORIGINAL_MD5_PREFIX) > -1) {
             originComment = body.slice(body.indexOf(ORIGIN_CONTENT_PREFIX) + ORIGIN_CONTENT_PREFIX.length, body.indexOf(ORIGIN_CONTENT_POSTFIX));
-            console.log('新body内容：' +
-                body +
-                ';startindex:' +
-                body.indexOf(ORIGIN_CONTENT_PREFIX) +
-                ORIGIN_CONTENT_PREFIX.length +
-                ';endindex:' +
-                body.indexOf(ORIGIN_CONTENT_POSTFIX));
+            // console.log(
+            //   '原来的body内容：' +
+            //     body +
+            //     ';startindex:' +
+            //     body.indexOf(ORIGIN_CONTENT_PREFIX) +
+            //     ORIGIN_CONTENT_PREFIX.length +
+            //     ';endindex:' +
+            //     body.indexOf(ORIGIN_CONTENT_POSTFIX)
+            // )
         }
         const startIndex = body.indexOf(ORIGINAL_MD5_PREFIX);
         const titleContentOrigin = translate_1.translateText.stringify(originComment, originTitle);
@@ -127,11 +129,16 @@ function main() {
             title = [originTitle, translateTitle].join(TRANSLATE_TITLE_DIVING);
         }
         //如果originComment的前20个字符和translateComment的前20个字符一样，就不用翻译了
-        if (originComment && translateComment && originComment.length == translateComment.length) {
+        if (originComment &&
+            translateComment &&
+            originComment.length == translateComment.length) {
             core.info('内容一样，不需要翻译');
             return;
         }
-        if (originComment && translateComment && originComment.length > 10 && translateComment.length > 10) {
+        if (originComment &&
+            translateComment &&
+            originComment.length > 10 &&
+            translateComment.length > 10) {
             const originCommentStart = originComment.substring(0, 10);
             const translateCommentStart = translateComment.substring(0, 10);
             if (originCommentStart === translateCommentStart) {
@@ -140,9 +147,10 @@ function main() {
             }
         }
         if (translateComment && originComment != translateComment) {
+            core.info('替换前的内容：' + originComment);
             //替换markdown语法转换为HTML标签
             originComment = replaceMarkdownSyntax(originComment);
-            core.info('替换后原始内容：' + originComment);
+            core.info('替换后的内容：' + originComment);
             // 拼接字符串
             body = `    ${DEFAULT_BOT_MESSAGE}
 ---
@@ -161,7 +169,11 @@ function replaceMarkdownSyntax(input) {
     // 替换函数，将匹配到的Markdown语法标识符替换为HTML的对应标签
     const handlePairs = (match) => {
         const openingTag = match[1];
-        const closingTag = openingTag === '*' ? '</em>' : openingTag === '_' ? '</strong>' : '</code>';
+        const closingTag = openingTag === '*'
+            ? '</em>'
+            : openingTag === '_'
+                ? '</strong>'
+                : '</code>';
         return `<${openingTag}>${match.substring(2, match.length - 2)}</${closingTag}>`;
     };
     const replaceFunction = (match, p1) => {

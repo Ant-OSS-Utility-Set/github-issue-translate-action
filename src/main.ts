@@ -52,15 +52,15 @@ async function main(): Promise<void> {
       body.indexOf(ORIGIN_CONTENT_PREFIX) + ORIGIN_CONTENT_PREFIX.length,
       body.indexOf(ORIGIN_CONTENT_POSTFIX)
     )
-    console.log(
-      '新body内容：' +
-        body +
-        ';startindex:' +
-        body.indexOf(ORIGIN_CONTENT_PREFIX) +
-        ORIGIN_CONTENT_PREFIX.length +
-        ';endindex:' +
-        body.indexOf(ORIGIN_CONTENT_POSTFIX)
-    )
+    // console.log(
+    //   '原来的body内容：' +
+    //     body +
+    //     ';startindex:' +
+    //     body.indexOf(ORIGIN_CONTENT_PREFIX) +
+    //     ORIGIN_CONTENT_PREFIX.length +
+    //     ';endindex:' +
+    //     body.indexOf(ORIGIN_CONTENT_POSTFIX)
+    // )
   }
 
   const startIndex = body.indexOf(ORIGINAL_MD5_PREFIX)
@@ -128,9 +128,10 @@ async function main(): Promise<void> {
   }
 
   if (translateComment && originComment != translateComment) {
+    core.info('替换前的内容：' + originComment)
     //替换markdown语法转换为HTML标签
     originComment = replaceMarkdownSyntax(originComment)
-    core.info('替换后原始内容：' + originComment)
+    core.info('替换后的内容：' + originComment)
     // 拼接字符串
     body = `    ${DEFAULT_BOT_MESSAGE}
 ---

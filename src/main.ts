@@ -37,7 +37,8 @@ async function main(): Promise<void> {
   if (!match) {
     return
   }
-  if (typeof body == 'undefined') {
+  if (typeof body == 'undefined' || body == null) {
+    core.info("body 读取为空，直接返回")
     return
   }
 
@@ -107,7 +108,23 @@ async function main(): Promise<void> {
     }
 
     let body = ''
-    if (translateComment && originComment !== translateComment) {
+    //如果originComment的前20个字符和translateComment的前20个字符一样，就不用翻译了
+    if (originComment && translateComment && originComment.length == translateComment.length) {
+      core.info('内容一样，不需要翻译')
+      return
+    }
+
+    if (originComment && translateComment && originComment.length > 10 && translateComment.length > 10
+    ) {
+      const originCommentStart = originComment.substring(0, 10)
+      const translateCommentStart = translateComment.substring(0, 10)
+      if (originCommentStart === translateCommentStart) {
+        core.info('前20个字符一样，不需要翻译')
+        return
+      }
+    }
+
+    if (translateComment && originComment != translateComment) {
       //替换markdown语法转换为HTML标签
       originComment = replaceMarkdownSyntax(originComment)
       core.info('替换后原始内容：' + originComment)

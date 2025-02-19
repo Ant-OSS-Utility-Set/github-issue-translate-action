@@ -33,12 +33,12 @@ async function main(): Promise<void> {
     return
   }
 
-  const {match, title, body, update} = model
+  let {match, title, body, update} = model
   if (!match) {
     return
   }
   if (typeof body == 'undefined' || body == null) {
-    core.info("body 读取为空，直接返回")
+    core.info('body 读取为空，直接返回')
     return
   }
 
@@ -53,7 +53,7 @@ async function main(): Promise<void> {
       body.indexOf(ORIGIN_CONTENT_POSTFIX)
     )
     console.log(
-      'body内容：' +
+      '新body内容：' +
         body +
         ';startindex:' +
         body.indexOf(ORIGIN_CONTENT_PREFIX) +
@@ -70,7 +70,7 @@ async function main(): Promise<void> {
   const translateOrigin_MD5 =
     ORIGINAL_MD5_PREFIX + newMd5 + ORIGINAL_MD5_POSTFIX
   if (startIndex > -1) {
-    core.info('比较md5开始：')
+    // core.info('比较md5开始：')
     //md5
     const startIndex = body.indexOf(ORIGINAL_MD5_PREFIX)
     const endIndex = body.indexOf(ORIGINAL_MD5_POSTFIX)
@@ -78,9 +78,9 @@ async function main(): Promise<void> {
       startIndex + ORIGINAL_MD5_PREFIX.length,
       endIndex
     )
-
-    core.info('旧的原文md5:' + originalMd5)
-    core.info('新的原文md5:' + newMd5)
+    //
+    // core.info('旧的原文md5:' + originalMd5)
+    // core.info('新的原文md5:' + newMd5)
     if (originalMd5 === newMd5) {
       core.info('原文不变，不需要edit')
       return
@@ -99,122 +99,97 @@ async function main(): Promise<void> {
 
   let [translateTitle, translateComment] = translateText.parse(translateTmp)
 
-  core.info('翻译标题：' + translateTitle)
-  core.info('翻译内容：' + translateComment)
-  if (shouldAppendContent) {
-    let title = ''
-    if (translateTitle && originTitle !== translateTitle) {
-      title = [originTitle, translateTitle].join(TRANSLATE_TITLE_DIVING)
-    }
+  if (translateTitle && originTitle !== translateTitle) {
+    title = [originTitle, translateTitle].join(TRANSLATE_TITLE_DIVING)
+  }
 
-    let body = ''
-    //如果originComment的前20个字符和translateComment的前20个字符一样，就不用翻译了
-    if (originComment && translateComment && originComment.length == translateComment.length) {
-      core.info('内容一样，不需要翻译')
+  //如果originComment的前20个字符和translateComment的前20个字符一样，就不用翻译了
+  if (
+    originComment &&
+    translateComment &&
+    originComment.length == translateComment.length
+  ) {
+    core.info('内容一样，不需要翻译')
+    return
+  }
+
+  if (
+    originComment &&
+    translateComment &&
+    originComment.length > 10 &&
+    translateComment.length > 10
+  ) {
+    const originCommentStart = originComment.substring(0, 10)
+    const translateCommentStart = translateComment.substring(0, 10)
+    if (originCommentStart === translateCommentStart) {
+      core.info('前20个字符一样，不需要翻译')
       return
     }
+  }
 
-    if (originComment && translateComment && originComment.length > 10 && translateComment.length > 10
-    ) {
-      const originCommentStart = originComment.substring(0, 10)
-      const translateCommentStart = translateComment.substring(0, 10)
-      if (originCommentStart === translateCommentStart) {
-        core.info('前20个字符一样，不需要翻译')
-        return
-      }
-    }
-
-    if (translateComment && originComment != translateComment) {
-      //替换markdown语法转换为HTML标签
-      originComment = replaceMarkdownSyntax(originComment)
-      core.info('替换后原始内容：' + originComment)
-
-      body = `    ${DEFAULT_BOT_MESSAGE}
+  if (translateComment && originComment != translateComment) {
+    //替换markdown语法转换为HTML标签
+    originComment = replaceMarkdownSyntax(originComment)
+    core.info('替换后原始内容：' + originComment)
+    // 拼接字符串
+    body = `    ${DEFAULT_BOT_MESSAGE}
 ---
 ${translateComment}
 ${ORIGIN_CONTENT_PREFIX}${originComment}${ORIGIN_CONTENT_POSTFIX}
 ${translateOrigin_MD5}`
-    }
-    await update(octokit, body || undefined, title || undefined)
-  } else {
-    const needCommitComment =
-      translateComment && translateComment !== originComment
-    const {
-      context: {
-        payload: {issue, discussion, pull_request}
-      }
-    } = github
-    translateComment = `
-> ${botNote}
-----
-${
-  isModifyTitle === 'false' && needCommitComment
-    ? `**Title:** ${translateTitle}`
-    : ''
-}
-
-
-${translateComment}`
-    if (
-      isModifyTitle === 'true' &&
-      translateTitle &&
-      translateTitle !== originTitle
-    ) {
-      await update(octokit, undefined, translateTitle)
-    }
-
-    if (translateComment && translateComment !== originComment) {
-      await createIssueComment({
-        pull_number: pull_request?.number,
-        discussion_number: discussion?.node_id,
-        issue_number: issue?.number,
-        body: translateComment,
-        octokit
-      })
-    }
   }
 
+  await update(octokit, body || undefined, title || undefined)
   core.setOutput('complete time', new Date().toTimeString())
 }
-function replaceMarkdownSyntax(input:string):string {
+
+//工具函数
+function replaceMarkdownSyntax(input: string): string {
   // 正则表达式匹配Markdown语法标识符
-  const markdownSyntaxRegex = /(\*|_|\`|>|#|\[|\])+/g;
+  const markdownSyntaxRegex = /(\*|_|\`|>|#|\[|\])+/g
   // 替换函数，将匹配到的Markdown语法标识符替换为HTML的对应标签
 
-  const handlePairs = (match:string) => {
-    const openingTag = match[1];
-    const closingTag = openingTag === '*' ? '</em>' : openingTag === '_' ? '</strong>' : '</code>';
-    return `<${openingTag}>${match.substring(2, match.length - 2)}</${closingTag}>`;
-  };
+  const handlePairs = (match: string) => {
+    const openingTag = match[1]
+    const closingTag =
+      openingTag === '*'
+        ? '</em>'
+        : openingTag === '_'
+        ? '</strong>'
+        : '</code>'
+    return `<${openingTag}>${match.substring(
+      2,
+      match.length - 2
+    )}</${closingTag}>`
+  }
 
-  const replaceFunction = (match:string, p1:string) => {
-
+  const replaceFunction = (match: string, p1: string) => {
     // 根据匹配到的字符类型，生成对应的HTML标签
     switch (p1) {
       case '*':
-        return '<em>';
+        return '<em>'
       case '_':
-        return '<strong>';
+        return '<strong>'
       case '`':
-        return '<code>';
+        return '<code>'
       case '>':
-        return '<blockquote>';
+        return '<blockquote>'
       case '#':
-        return '<h1>';
+        return '<h1>'
       case '[':
-        return '<a href="">';
+        return '<a href="">'
       case ']':
-        return '</a>';
+        return '</a>'
       default:
         // // 如果匹配到的字符是成对标识的开始，处理成对标识
         if (p1 === '*' || p1 === '_' || p1 === '`') {
-          return handlePairs(match);
+          return handlePairs(match)
         }
-        return '';
+        return ''
     }
-  };
+  }
   // 使用replace方法进行替换
-  return input.replace(markdownSyntaxRegex, replaceFunction);
+  return input.replace(markdownSyntaxRegex, replaceFunction)
 }
 
 async function run() {

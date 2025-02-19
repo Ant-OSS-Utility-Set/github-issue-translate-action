@@ -65,14 +65,14 @@ async function main(): Promise<void> {
   }
 
   // translate issue comment body to english
-  const translateTmp = await translate(titleContentUnionText)
-  if (!translateTmp || translateTmp == titleContentUnionText) {
+  const translateString = await translate(titleContentUnionText)
+  if (!translateString || translateString == titleContentUnionText) {
     return core.warning('The translateBody is null or same, ignore return.')
   }
 
-  let [translateTitle, translateComment] = translateText.parse(translateTmp)
+  let [translateTitle, translateComment] = translateText.parse(translateString)
   const isTransSameFlag = isTransSameText(originComment, translateComment)
-  if (!isTransSameFlag) {
+  if (isTransSameFlag) {
     return
   }
 

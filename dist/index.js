@@ -106,12 +106,17 @@ function main() {
             return;
         }
         //替换翻译后的markdown文本为html文本，并改变md5
-        const md5Text = replateMarkdowntoHtmlAndGenerateMd5(originComment);
+        console.log('替换前的内容：' + originComment);
+        //替换markdown语法转换为HTML标签
+        const parsedComment = yield marked_1.default.parse(originComment);
+        console.log('替换后的html内容：' + parsedComment);
+        let newMd5 = ts_md5_1.Md5.hashStr(parsedComment);
+        const md5Text = ORIGINAL_MD5_PREFIX + newMd5 + ORIGINAL_MD5_POSTFIX;
         // 拼接字符串
         body = `    ${DEFAULT_BOT_MESSAGE}
 ---
 ${translateComment}
-${ORIGIN_CONTENT_PREFIX}${originComment}${ORIGIN_CONTENT_POSTFIX}${md5Text}`;
+${ORIGIN_CONTENT_PREFIX}${parsedComment}${ORIGIN_CONTENT_POSTFIX}${md5Text}`;
         if (translateTitle && originTitle !== translateTitle) {
             title = [originTitle, translateTitle].join(TRANSLATE_TITLE_DIVING);
         }
@@ -120,13 +125,6 @@ ${ORIGIN_CONTENT_PREFIX}${originComment}${ORIGIN_CONTENT_POSTFIX}${md5Text}`;
     });
 }
 //工具函数
-function replateMarkdowntoHtmlAndGenerateMd5(text) {
-    console.log('替换前的内容：' + text);
-    //替换markdown语法转换为HTML标签
-    const parsed = marked_1.default.parse(text);
-    console.log('替换后的html内容：' + parsed);
-    return ORIGINAL_MD5_PREFIX + parsed + ORIGINAL_MD5_POSTFIX;
-}
 function checkMd5(body, titleContentOrigin) {
     const startIndex = body.indexOf(ORIGINAL_MD5_PREFIX);
     let newMd5 = ts_md5_1.Md5.hashStr(titleContentOrigin);

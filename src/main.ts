@@ -59,7 +59,9 @@ async function main(): Promise<void> {
     originComment,
     originTitle
   )
-  const isNotModified = checkMd5(body, titleContentUnionText)
+
+  //对比md5和原文是否一致
+  const isNotModified = checkMd5(body, originComment)
   if (isNotModified) {
     return
   }

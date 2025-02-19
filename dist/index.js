@@ -86,10 +86,10 @@ function main() {
         if (body.indexOf(ORIGINAL_MD5_PREFIX) > -1) {
             originComment = body.slice(body.indexOf(ORIGIN_CONTENT_PREFIX) + ORIGIN_CONTENT_PREFIX.length, body.indexOf(ORIGIN_CONTENT_POSTFIX));
         }
-        if ((0, utils_1.isEnglish)(originComment)) {
-            core.info('原文已经是英文，不需要翻译');
-            return;
-        }
+        // if (isEnglish(originComment)) {
+        //   core.info('原文已经是英文，不需要翻译')
+        //   return
+        // }
         const titleContentUnionText = translate_1.translateText.stringify(originComment, originTitle);
         //对比md5和原文是否一致
         const isNotModified = checkMd5(body, originComment);

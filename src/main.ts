@@ -50,10 +50,10 @@ async function main(): Promise<void> {
       body.indexOf(ORIGIN_CONTENT_POSTFIX)
     )
   }
-  if (isEnglish(originComment)) {
-    core.info('原文已经是英文，不需要翻译')
-    return
-  }
+  // if (isEnglish(originComment)) {
+  //   core.info('原文已经是英文，不需要翻译')
+  //   return
+  // }
 
   const titleContentUnionText = translateText.stringify(
     originComment,

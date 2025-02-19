@@ -11,6 +11,7 @@ const ORIGINAL_MD5_PREFIX = `<!--MD5:`
 const ORIGINAL_MD5_POSTFIX = `:MD5-->`
 const ORIGIN_CONTENT_PREFIX = `<details><summary>原文</summary>`
 const ORIGIN_CONTENT_POSTFIX = `</details>`
+const UPDATED_FLAG = `</hide>`
 const DEFAULT_BOT_MESSAGE = `Github Action Bot detected the issue body's language is not English, translate it automatically`
 const DEFAULT_BOT_TOKEN = process.env.GITHUB_TOKEN
 
@@ -45,7 +46,6 @@ async function main(): Promise<void> {
 
   const octokit = github.getOctokit(botToken)
   const originTitle = title?.split(TRANSLATE_TITLE_DIVING)?.[0]
-  // @ts-ignore解析出来原始数据,test
 
   let originComment = body
   if (body.indexOf(ORIGINAL_MD5_PREFIX) > -1) {
@@ -62,6 +62,10 @@ async function main(): Promise<void> {
     //     ';endindex:' +
     //     body.indexOf(ORIGIN_CONTENT_POSTFIX)
     // )
+  }
+  if (body.indexOf(UPDATED_FLAG) > -1) {
+    core.info('已经更新过了,存在hide标签：' + isUpdated)
+    return
   }
 
   const startIndex = body.indexOf(ORIGINAL_MD5_PREFIX)
@@ -129,16 +133,16 @@ async function main(): Promise<void> {
   }
 
   if (translateComment && originComment != translateComment) {
-    // console.log('替换前的内容：' + originComment)
-    // //替换markdown语法转换为HTML标签
-    // originComment = replaceMarkdownSyntax(originComment)
-    // console.log('替换后的内容：' + originComment)
+    console.log('替换前的内容：' + originComment)
+    //替换markdown语法转换为HTML标签
+    originComment = replaceMarkdownSyntax(originComment)
+    console.log('替换后的内容：' + originComment)
     // 拼接字符串
     body = `    ${DEFAULT_BOT_MESSAGE}
 ---
 ${translateComment}
 ${ORIGIN_CONTENT_PREFIX}${originComment}${ORIGIN_CONTENT_POSTFIX}
-${translateOrigin_MD5}`
+${translateOrigin_MD5}${UPDATED_FLAG}`
   }
 
   await update(octokit, body || undefined, title || undefined, 'yes')

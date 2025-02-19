@@ -72,12 +72,7 @@ function main() {
         if (!model) {
             return;
         }
-        let { match, title, body, update, isUpdated } = model;
-        console.log('是否被更新过：' + isUpdated);
-        if ('yes' == isUpdated) {
-            core.info('已经翻译过了：' + isUpdated);
-            return;
-        }
+        let { match, title, body, update } = model;
         if (!match) {
             return;
         }
@@ -91,6 +86,10 @@ function main() {
         if (body.indexOf(ORIGINAL_MD5_PREFIX) > -1) {
             originComment = body.slice(body.indexOf(ORIGIN_CONTENT_PREFIX) + ORIGIN_CONTENT_PREFIX.length, body.indexOf(ORIGIN_CONTENT_POSTFIX));
         }
+        if ((0, utils_1.isEnglish)(originComment)) {
+            core.info('原文已经是英文，不需要翻译');
+            return;
+        }
         const titleContentUnionText = translate_1.translateText.stringify(originComment, originTitle);
         const isNotModified = checkMd5(body, titleContentUnionText);
         if (isNotModified) {
@@ -102,8 +101,8 @@ function main() {
             return core.warning('The translateBody is null or same, ignore return.');
         }
         let [translateTitle, translateComment] = translate_1.translateText.parse(translateTmp);
-        const isEnglishTextFlag = isEnglishText(originComment, translateComment);
-        if (!isEnglishTextFlag) {
+        const isTransSameFlag = isTransSameText(originComment, translateComment);
+        if (!isTransSameFlag) {
             return;
         }
         //替换翻译后的markdown文本为html文本，并改变md5
@@ -116,7 +115,7 @@ ${ORIGIN_CONTENT_PREFIX}${originComment}${ORIGIN_CONTENT_POSTFIX}${md5Text}`;
         if (translateTitle && originTitle !== translateTitle) {
             title = [originTitle, translateTitle].join(TRANSLATE_TITLE_DIVING);
         }
-        yield update(octokit, body || undefined, title || undefined, 'yes');
+        yield update(octokit, body || undefined, title || undefined);
         core.setOutput('complete time', new Date().toTimeString());
     });
 }
@@ -147,7 +146,7 @@ function checkMd5(body, titleContentOrigin) {
     }
     return false;
 }
-function isEnglishText(originComment, translateComment) {
+function isTransSameText(originComment, translateComment) {
     //如果originComment的前20个字符和translateComment的前20个字符一样，就不用翻译了
     if (originComment &&
         translateComment &&

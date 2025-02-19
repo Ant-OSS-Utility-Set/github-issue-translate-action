@@ -31,12 +31,8 @@ async function main(): Promise<void> {
     return
   }
 
-  let {match, title, body, update, isUpdated} = model
-  console.log('是否被更新过：' + isUpdated)
-  if ('yes' == isUpdated) {
-    core.info('已经翻译过了：' + isUpdated)
-    return
-  }
+  let {match, title, body, update} = model
+
   if (!match) {
     return
   }
@@ -53,6 +49,10 @@ async function main(): Promise<void> {
       body.indexOf(ORIGIN_CONTENT_PREFIX) + ORIGIN_CONTENT_PREFIX.length,
       body.indexOf(ORIGIN_CONTENT_POSTFIX)
     )
+  }
+  if (isEnglish(originComment)) {
+    core.info('原文已经是英文，不需要翻译')
+    return
   }
 
   const titleContentUnionText = translateText.stringify(
@@ -71,8 +71,8 @@ async function main(): Promise<void> {
   }
 
   let [translateTitle, translateComment] = translateText.parse(translateTmp)
-  const isEnglishTextFlag = isEnglishText(originComment, translateComment)
-  if (!isEnglishTextFlag) {
+  const isTransSameFlag = isTransSameText(originComment, translateComment)
+  if (!isTransSameFlag) {
     return
   }
 
@@ -88,7 +88,7 @@ ${ORIGIN_CONTENT_PREFIX}${originComment}${ORIGIN_CONTENT_POSTFIX}${md5Text}`
   if (translateTitle && originTitle !== translateTitle) {
     title = [originTitle, translateTitle].join(TRANSLATE_TITLE_DIVING)
   }
-  await update(octokit, body || undefined, title || undefined, 'yes')
+  await update(octokit, body || undefined, title || undefined)
   core.setOutput('complete time', new Date().toTimeString())
 }
 
@@ -126,7 +126,7 @@ function checkMd5(body: string, titleContentOrigin: string) {
   return false
 }
 
-function isEnglishText(
+function isTransSameText(
   originComment: string,
   translateComment: string | undefined
 ) {

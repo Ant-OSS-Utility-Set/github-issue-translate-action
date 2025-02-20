@@ -52,12 +52,10 @@ const translate_1 = __nccwpck_require__(7978);
 const TRANSLATE_TITLE_DIVING = `||`;
 const ORIGINAL_MD5_PREFIX = `<!--MD5:`;
 const ORIGINAL_MD5_POSTFIX = `:MD5-->`;
-const ORIGIN_CONTENT_PREFIX = `<details><summary>原文</summary>`;
+const ORIGIN_CONTENT_PREFIX = `\n <details><summary>原文</summary>`;
 const REPLAY_PREFIX1 = `> 原文`;
 const ORIGIN_CONTENT_POSTFIX = `</details>`;
-const UPDATED_FLAG = (/* unused pure expression or super */ null && (`</hide>`));
 const DEFAULT_BOT_MESSAGE = `\`\`\`Github Action Bot detected the issue body's language is not English, translate it automatically\`\`\`\n`;
-const REPLAY_FOR_REPLACE_BOT = (/* unused pure expression or super */ null && (`> Github Action Bot detected the issue body's language is not English, translate it automatically`));
 const DEFAULT_BOT_TOKEN = process.env.GITHUB_TOKEN;
 function main() {
     var _a;

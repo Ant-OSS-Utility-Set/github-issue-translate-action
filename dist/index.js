@@ -57,7 +57,7 @@ const REPLAY_PREFIX1 = `> 原文`;
 const ORIGIN_CONTENT_POSTFIX = `</details>`;
 const UPDATED_FLAG = (/* unused pure expression or super */ null && (`</hide>`));
 const DEFAULT_BOT_MESSAGE = `    Github Action Bot detected the issue body's language is not English, translate it automatically\n---\n`;
-const REPLAY_FOR_REPLACE_BOT = `> Github Action Bot detected the issue body's language is not English, translate it automatically`;
+const REPLAY_FOR_REPLACE_BOT = (/* unused pure expression or super */ null && (`> Github Action Bot detected the issue body's language is not English, translate it automatically`));
 const DEFAULT_BOT_TOKEN = process.env.GITHUB_TOKEN;
 function main() {
     var _a;
@@ -88,8 +88,14 @@ function main() {
         if (body.indexOf(ORIGINAL_MD5_PREFIX) > -1) {
             originComment = body.slice(body.indexOf(ORIGIN_CONTENT_PREFIX) + ORIGIN_CONTENT_PREFIX.length, body.indexOf(ORIGIN_CONTENT_POSTFIX));
         }
-        originComment = originComment.replace(REPLAY_PREFIX1, '');
-        originComment = originComment.replace(REPLAY_FOR_REPLACE_BOT, '');
+        //删除replay的重复内容
+        if (originComment.indexOf(REPLAY_PREFIX1) > -1) {
+            console.log('删除前的replay内容：' + originComment);
+            originComment = originComment.slice(originComment.indexOf(REPLAY_PREFIX1) + REPLAY_PREFIX1.length);
+            console.log('删除后的replay内容：' + originComment);
+        }
+        // originComment = originComment.replace(REPLAY_PREFIX1, '')
+        // originComment = originComment.replace(REPLAY_FOR_REPLACE_BOT, '')
         const titleContentUnionText = translate_1.translateText.stringify(originComment, originTitle);
         //对比md5和原文是否一致
         const isNotModified = checkMd5(body, originComment);
@@ -142,25 +148,12 @@ function checkMd5(body, titleContentOrigin) {
     return false;
 }
 function isTransSameText(originComment, translateComment) {
-    //如果originComment的前20个字符和translateComment的前20个字符一样，就不用翻译了
     if (originComment &&
         translateComment &&
         originComment.length == translateComment.length) {
         core.info('内容一样，不需要翻译');
         return true;
     }
-    if (originComment &&
-        translateComment &&
-        originComment.length > 20 &&
-        translateComment.length > 20) {
-        const originCommentStart = originComment.substring(0, 20);
-        const translateCommentStart = translateComment.substring(0, 20);
-        if (originCommentStart === translateCommentStart) {
-            core.info('前20个字符一样，不需要翻译');
-            return true;
-        }
-    }
-    return false;
 }
 function run() {
     return __awaiter(this, void 0, void 0, function* () {

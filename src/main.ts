@@ -53,8 +53,16 @@ async function main(): Promise<void> {
     )
   }
 
-  originComment = originComment.replace(REPLAY_PREFIX1, '')
-  originComment = originComment.replace(REPLAY_FOR_REPLACE_BOT, '')
+  //删除replay的重复内容
+  if (originComment.indexOf(REPLAY_PREFIX1) > -1) {
+    console.log('删除前的replay内容：' + originComment)
+    originComment = originComment.slice(
+      originComment.indexOf(REPLAY_PREFIX1) + REPLAY_PREFIX1.length
+    )
+    console.log('删除后的replay内容：' + originComment)
+  }
+  // originComment = originComment.replace(REPLAY_PREFIX1, '')
+  // originComment = originComment.replace(REPLAY_FOR_REPLACE_BOT, '')
 
   const titleContentUnionText = translateText.stringify(
     originComment,
@@ -127,7 +135,6 @@ function isTransSameText(
   originComment: string,
   translateComment: string | undefined
 ) {
-  //如果originComment的前20个字符和translateComment的前20个字符一样，就不用翻译了
   if (
     originComment &&
     translateComment &&
@@ -136,21 +143,6 @@ function isTransSameText(
     core.info('内容一样，不需要翻译')
     return true
   }
-
-  if (
-    originComment &&
-    translateComment &&
-    originComment.length > 20 &&
-    translateComment.length > 20
-  ) {
-    const originCommentStart = originComment.substring(0, 20)
-    const translateCommentStart = translateComment.substring(0, 20)
-    if (originCommentStart === translateCommentStart) {
-      core.info('前20个字符一样，不需要翻译')
-      return true
-    }
-  }
-  return false
 }
 
 async function run() {

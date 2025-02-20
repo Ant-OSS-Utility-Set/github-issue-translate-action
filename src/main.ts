@@ -11,6 +11,8 @@ const TRANSLATE_TITLE_DIVING = `||`
 const ORIGINAL_MD5_PREFIX = `<!--MD5:`
 const ORIGINAL_MD5_POSTFIX = `:MD5-->`
 const ORIGIN_CONTENT_PREFIX = `<details><summary>原文</summary>`
+const REPLAY_PREFIX1 = `> 原文`
+const REPLAY_PREFIX2 = `> <details><summary>原文</summary>`
 const ORIGIN_CONTENT_POSTFIX = `</details>`
 const UPDATED_FLAG = `</hide>`
 const DEFAULT_BOT_MESSAGE = `Github Action Bot detected the issue body's language is not English, translate it automatically`
@@ -50,10 +52,19 @@ async function main(): Promise<void> {
       body.indexOf(ORIGIN_CONTENT_POSTFIX)
     )
   }
-  // if (isEnglish(originComment)) {
-  //   core.info('原文已经是英文，不需要翻译')
-  //   return
-  // }
+
+  if (originComment.indexOf(REPLAY_PREFIX1) > -1) {
+    console.log('REPLAY_PREFIX1 ')
+    originComment = originComment.slice(
+      originComment.indexOf(REPLAY_PREFIX1) + REPLAY_PREFIX1.length
+    )
+  }
+  if (originComment.indexOf(REPLAY_PREFIX2) > -1) {
+    console.log('REPLAY_PREFIX2 ')
+    originComment = originComment.slice(
+      originComment.indexOf(REPLAY_PREFIX2) + REPLAY_PREFIX2.length
+    )
+  }
 
   const titleContentUnionText = translateText.stringify(
     originComment,
@@ -83,8 +94,8 @@ async function main(): Promise<void> {
   //替换markdown语法转换为HTML标签
   const parsedComment = await marked.parse(originComment)
   console.log('替换后的html内容：' + parsedComment)
-  let newMd5 = Md5.hashStr(parsedComment)
-  const md5Text = ORIGINAL_MD5_PREFIX + newMd5 + ORIGINAL_MD5_POSTFIX
+  const md5Text =
+    ORIGINAL_MD5_PREFIX + Md5.hashStr(parsedComment) + ORIGINAL_MD5_POSTFIX
 
   // 拼接字符串
   body = `    ${DEFAULT_BOT_MESSAGE}

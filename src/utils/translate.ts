@@ -1,6 +1,8 @@
 import * as core from '@actions/core'
 import BingTrans  from 'bing-translate-api'
+import {qWentranslat} from './qwen'
 import GoogleTrans  from "@tomsun28/google-translate-api"
+
 
 
 
@@ -45,9 +47,16 @@ async function replaceTrans(body:string,to:string) {
     await GoogleTrans(replacedString, {to: 'en'}).then((res: { text: string | undefined; }) => {
       result = res.text
       core.info("google翻译成功：" + result);
+      flag = true
     }).catch((err: any) => {
       console.error(err);
     });
+  }
+
+  if(!flag){
+    let qwenres =  await qWentranslat(replacedString)
+    result = qwenres ?? undefined
+    core.info("qwen翻译成功：" );
   }
 
 
@@ -74,6 +83,7 @@ function splitText(text: string, chunkSize: number) {
   }
   return chunks;
 }
+
 
 const MAGIC_JOIN_STRING = '@@===='
 export const translateText = {

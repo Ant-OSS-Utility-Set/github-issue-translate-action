@@ -12,10 +12,10 @@ const ORIGINAL_MD5_PREFIX = `<!--MD5:`
 const ORIGINAL_MD5_POSTFIX = `:MD5-->`
 const ORIGIN_CONTENT_PREFIX = `<details><summary>原文</summary>`
 const REPLAY_PREFIX1 = `> 原文`
-const REPLAY_PREFIX2 = `> <details><summary>原文</summary>`
 const ORIGIN_CONTENT_POSTFIX = `</details>`
 const UPDATED_FLAG = `</hide>`
-const DEFAULT_BOT_MESSAGE = `Github Action Bot detected the issue body's language is not English, translate it automatically`
+const DEFAULT_BOT_MESSAGE = `    Github Action Bot detected the issue body's language is not English, translate it automatically\n---\n`
+const REPLAY_FOR_REPLACE_BOT = `> Github Action Bot detected the issue body's language is not English, translate it automatically`
 const DEFAULT_BOT_TOKEN = process.env.GITHUB_TOKEN
 
 async function main(): Promise<void> {
@@ -53,18 +53,8 @@ async function main(): Promise<void> {
     )
   }
 
-  if (originComment.indexOf(REPLAY_PREFIX1) > -1) {
-    console.log('REPLAY_PREFIX1 ')
-    originComment = originComment.slice(
-      originComment.indexOf(REPLAY_PREFIX1) + REPLAY_PREFIX1.length
-    )
-  }
-  if (originComment.indexOf(REPLAY_PREFIX2) > -1) {
-    console.log('REPLAY_PREFIX2 ')
-    originComment = originComment.slice(
-      originComment.indexOf(REPLAY_PREFIX2) + REPLAY_PREFIX2.length
-    )
-  }
+  originComment = originComment.replace(REPLAY_PREFIX1, '')
+  originComment = originComment.replace(REPLAY_FOR_REPLACE_BOT, '')
 
   const titleContentUnionText = translateText.stringify(
     originComment,
@@ -98,10 +88,7 @@ async function main(): Promise<void> {
     ORIGINAL_MD5_PREFIX + Md5.hashStr(parsedComment) + ORIGINAL_MD5_POSTFIX
 
   // 拼接字符串
-  body = `    ${DEFAULT_BOT_MESSAGE}
----
-${translateComment}
-${ORIGIN_CONTENT_PREFIX}${parsedComment}${ORIGIN_CONTENT_POSTFIX}${md5Text}`
+  body = `${DEFAULT_BOT_MESSAGE}${translateComment}${ORIGIN_CONTENT_PREFIX}${parsedComment}${ORIGIN_CONTENT_POSTFIX}${md5Text}`
 
   if (translateTitle && originTitle !== translateTitle) {
     title = [originTitle, translateTitle].join(TRANSLATE_TITLE_DIVING)

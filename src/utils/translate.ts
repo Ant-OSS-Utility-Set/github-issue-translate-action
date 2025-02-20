@@ -35,23 +35,25 @@ async function replaceTrans(body:string,to:string) {
   let result: string | undefined
 
   let flag = false;
-  await BingTrans.translate(replacedString, "zh-Hans", "en").then(res => {
-     result = res?.translation;
-    core.info("bing翻译成功：" + result);
+
+  await GoogleTrans(replacedString, {to: 'en'}).then((res: { text: string | undefined; }) => {
+    result = res.text
+    core.info("google翻译成功：" + result);
     flag = true
-  }).catch(err => {
-    core.error(err);
+  }).catch((err: any) => {
+    console.error(err);
   });
 
   if(!flag){
-    await GoogleTrans(replacedString, {to: 'en'}).then((res: { text: string | undefined; }) => {
-      result = res.text
-      core.info("google翻译成功：" + result);
+    await BingTrans.translate(replacedString, "zh-Hans", "en").then(res => {
+      result = res?.translation;
+      core.info("bing翻译成功：" + result);
       flag = true
-    }).catch((err: any) => {
-      console.error(err);
+    }).catch(err => {
+      core.error(err);
     });
   }
+
 
   if(!flag){
     let qwenres =  await qWentranslat(replacedString)

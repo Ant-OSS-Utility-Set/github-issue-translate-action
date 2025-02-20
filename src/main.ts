@@ -14,7 +14,7 @@ const ORIGIN_CONTENT_PREFIX = `<details><summary>原文</summary>`
 const REPLAY_PREFIX1 = `> 原文`
 const ORIGIN_CONTENT_POSTFIX = `</details>`
 const UPDATED_FLAG = `</hide>`
-const DEFAULT_BOT_MESSAGE = `    Github Action Bot detected the issue body's language is not English, translate it automatically\n---\n`
+const DEFAULT_BOT_MESSAGE = `\`\`\`Github Action Bot detected the issue body's language is not English, translate it automatically\`\`\`\n`
 const REPLAY_FOR_REPLACE_BOT = `> Github Action Bot detected the issue body's language is not English, translate it automatically`
 const DEFAULT_BOT_TOKEN = process.env.GITHUB_TOKEN
 

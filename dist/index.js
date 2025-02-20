@@ -56,7 +56,7 @@ const ORIGIN_CONTENT_PREFIX = `<details><summary>原文</summary>`;
 const REPLAY_PREFIX1 = `> 原文`;
 const ORIGIN_CONTENT_POSTFIX = `</details>`;
 const UPDATED_FLAG = (/* unused pure expression or super */ null && (`</hide>`));
-const DEFAULT_BOT_MESSAGE = `    Github Action Bot detected the issue body's language is not English, translate it automatically\n---\n`;
+const DEFAULT_BOT_MESSAGE = `\`\`\`Github Action Bot detected the issue body's language is not English, translate it automatically\`\`\`\n`;
 const REPLAY_FOR_REPLACE_BOT = (/* unused pure expression or super */ null && (`> Github Action Bot detected the issue body's language is not English, translate it automatically`));
 const DEFAULT_BOT_TOKEN = process.env.GITHUB_TOKEN;
 function main() {
@@ -1041,20 +1041,20 @@ function replaceTrans(body, to) {
         });
         let result;
         let flag = false;
-        yield bing_translate_api_1.default.translate(replacedString, "zh-Hans", "en").then(res => {
-            result = res === null || res === void 0 ? void 0 : res.translation;
-            core.info("bing翻译成功：" + result);
+        yield (0, google_translate_api_1.default)(replacedString, { to: 'en' }).then((res) => {
+            result = res.text;
+            core.info("google翻译成功：" + result);
             flag = true;
-        }).catch(err => {
-            core.error(err);
+        }).catch((err) => {
+            console.error(err);
         });
         if (!flag) {
-            yield (0, google_translate_api_1.default)(replacedString, { to: 'en' }).then((res) => {
-                result = res.text;
-                core.info("google翻译成功：" + result);
+            yield bing_translate_api_1.default.translate(replacedString, "zh-Hans", "en").then(res => {
+                result = res === null || res === void 0 ? void 0 : res.translation;
+                core.info("bing翻译成功：" + result);
                 flag = true;
-            }).catch((err) => {
-                console.error(err);
+            }).catch(err => {
+                core.error(err);
             });
         }
         if (!flag) {

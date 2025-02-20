@@ -4,7 +4,7 @@ on:
     types: [opened, edited]
   issue_comment:
     types: [created, edited]
-  discussion: 
+  discussion:
     types: [created, edited]
   discussion_comment:
     types: [created, edited]
@@ -24,7 +24,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: ./
-        env: 
+        env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           IS_MODIFY_TITLE: true

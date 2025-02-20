@@ -14,6 +14,7 @@ export function isEnglish(body: string | null): boolean | true {
     core.warning(`Can not detect the undetermined comment body: ${body}`)
     return false
   }
+
   core.info(`Detect comment body language result is: ${detectResult}`)
   return detectResult === 'eng'
 }

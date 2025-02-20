@@ -1,5 +1,10 @@
 import * as core from '@actions/core'
 import BingTrans  from 'bing-translate-api'
+import {qWentranslat} from './qwen'
+import GoogleTrans  from "@tomsun28/google-translate-api"
+
+
+
 
 export async function translate(text: string): Promise<string | undefined> {
   try {
@@ -28,12 +33,35 @@ async function replaceTrans(body:string,to:string) {
     replacedString = replacedString.replace(match, `{$${index}}`);
   });
   let result: string | undefined
-  await BingTrans.translate(replacedString, "zh-Hans", "en").then(res => {
-     result = res?.translation;
-    core.info("翻译成功：" + result);
-  }).catch(err => {
-    core.error(err);
+
+  let flag = false;
+
+  await GoogleTrans(replacedString, {to: 'en'}).then((res: { text: string | undefined; }) => {
+    result = res.text
+    core.info("google翻译成功：" + result);
+    flag = true
+  }).catch((err: any) => {
+    console.error(err);
   });
+
+  if(!flag){
+    await BingTrans.translate(replacedString, "zh-Hans", "en").then(res => {
+      result = res?.translation;
+      core.info("bing翻译成功：" + result);
+      flag = true
+    }).catch(err => {
+      core.error(err);
+    });
+  }
+
+
+  if(!flag){
+    let qwenres =  await qWentranslat(replacedString)
+    result = qwenres ?? undefined
+    core.info("qwen翻译成功：" );
+  }
+
+
   // 把替换后的字符串变回原来的样子
   matches.forEach((match, index) => {
     console.log("替换回来："+match)
@@ -57,6 +85,7 @@ function splitText(text: string, chunkSize: number) {
   }
   return chunks;
 }
+
 
 const MAGIC_JOIN_STRING = '@@===='
 export const translateText = {
